@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<link rel="stylesheet" href="/theme.css">
+<script src="/auth.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volvo 設定</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Microsoft JhengHei', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+  .nav { background: #1e293b; border-bottom: 1px solid #2d3f56; padding: 0 24px; display: flex; align-items: center; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 16px rgba(0,0,0,.5);   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;} 
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-brand { font-size: 15px; font-weight: 700; color: #fff; padding: 16px 0; margin-right: 24px; }
+  .nav-link { padding: 16px 16px; color: #64748b; font-size: 13px; font-weight: 600; text-decoration: none; border-bottom: 2px solid transparent; }
+  .nav-link:hover { color: #e2e8f0; }
+  .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+  .layout { display: flex; height: calc(100vh - 53px); overflow: hidden; }
+  .sidebar { width: 220px; flex-shrink: 0; background: #1e293b; border-right: 1px solid #2d3f56; padding: 20px 12px; overflow-y: auto; height: 100%; }
+  .sidebar-section { margin-bottom: 24px; }
+  .sidebar-label { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .06em; padding: 0 8px; margin-bottom: 6px; }
+  .sidebar-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; font-weight: 600; color: #64748b; transition: all .15s; }
+  .sidebar-item:hover { background: #253347; color: #e2e8f0; }
+  .sidebar-item.active { background: rgba(59,130,246,.15); color: #3b82f6; }
+  .sidebar-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .main { flex: 1; padding: 28px; overflow-y: auto; height: 100%; max-width: 980px; }
+  .page-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: #64748b; margin-bottom: 24px; }
+  .card { background: #1e293b; border: 1px solid #2d3f56; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .card-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-title-note { font-size: 12px; font-weight: 400; color: #64748b; margin-left: auto; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: #3b82f6; color: #fff; }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-secondary { background: #253347; color: #cbd5e1; border: 1px solid #2d3f56; }
+  .btn-secondary:hover { background: #2d3f56; }
+  .btn-danger { background: rgba(239,68,68,.12); color: #ef4444; border: 1px solid rgba(239,68,68,.25); }
+  .btn-danger:hover { background: rgba(239,68,68,.2); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .upload-zone { border: 2px dashed #2d3f56; border-radius: 8px; padding: 36px; text-align: center; cursor: pointer; transition: all .2s; }
+  .upload-zone:hover, .upload-zone.drag { border-color: #3b82f6; background: rgba(59,130,246,.05); }
+  .upload-zone .icon { font-size: 36px; margin-bottom: 8px; }
+  .upload-zone p { color: #64748b; font-size: 12px; margin-top: 4px; }
+  input[type=file] { display: none; }
+  .file-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #2d3f56; font-size: 13px; }
+  .result-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #2d3f56; font-size: 13px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: rgba(16,185,129,.15); color: #10b981; }
+  .badge-red { background: rgba(239,68,68,.15); color: #ef4444; }
+  .badge-blue { background: rgba(59,130,246,.15); color: #3b82f6; }
+  .badge-yellow { background: rgba(245,158,11,.15); color: #f59e0b; }
+  .badge-gray { background: rgba(100,116,139,.15); color: #94a3b8; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #0f172a; color: #64748b; font-size: 11px; font-weight: 700; text-align: left; padding: 9px 12px; border-bottom: 1px solid #2d3f56; white-space: nowrap; }
+  td { padding: 9px 12px; border-bottom: 1px solid rgba(45,63,86,.4); vertical-align: middle; }
+  tr:hover td { background: rgba(37,51,71,.4); }
+  .num { text-align: right; }
+  .hint { background: rgba(59,130,246,.07); border: 1px solid rgba(59,130,246,.2); border-radius: 8px; padding: 11px 14px; font-size: 12px; color: #94a3b8; line-height: 1.8; margin-bottom: 14px; }
+  .hint code { background: #0f172a; padding: 1px 5px; border-radius: 3px; color: #60a5fa; }
+  .counts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 8px; }
+  .count-card { background: #0f172a; border: 1px solid #2d3f56; border-radius: 8px; padding: 12px; text-align: center; }
+  .count-val { font-size: 24px; font-weight: 800; }
+  .count-label { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .config-item { background: #0f172a; border: 1px solid #2d3f56; border-radius: 10px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; transition: border-color .15s; }
+  .config-item:hover { border-color: #3b82f6; }
+  .config-item-info { flex: 1; min-width: 0; }
+  .config-item-name { font-weight: 700; font-size: 14px; }
+  .config-item-desc { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .config-item-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .config-list { display: flex; flex-direction: column; gap: 8px; }
+  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 1000; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); animation: fadeIn .15s ease; }
+  .modal-backdrop.open { display: flex; align-items: center; justify-content: center; padding: 20px; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-window { background: #1a2740; border: 1px solid #2d4060; border-radius: 14px; width: 100%; max-width: 680px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 24px 64px rgba(0,0,0,.8); animation: slideUp .2s ease; }
+  @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-header { display: flex; align-items: center; gap: 10px; padding: 18px 22px 14px; border-bottom: 1px solid #2d3f56; flex-shrink: 0; }
+  .modal-header-title { font-size: 15px; font-weight: 800; flex: 1; }
+  .modal-close { width: 30px; height: 30px; border-radius: 8px; border: 1px solid #2d3f56; background: #0f172a; color: #64748b; font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+  .modal-close:hover { background: rgba(239,68,68,.15); border-color: #ef4444; color: #ef4444; }
+  .modal-body { overflow-y: auto; padding: 20px 22px; flex: 1; }
+  .modal-body::-webkit-scrollbar { width: 5px; }
+  .modal-body::-webkit-scrollbar-thumb { background: #2d3f56; border-radius: 3px; }
+  .modal-footer { padding: 14px 22px 18px; border-top: 1px solid #2d3f56; display: flex; gap: 8px; justify-content: flex-end; flex-shrink: 0; }
+  .form-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; }
+  .form-row label { font-size: 12px; color: #64748b; font-weight: 600; white-space: nowrap; padding-top: 9px; min-width: 40px; }
+  .form-input { background: #0f172a; border: 1px solid #2d3f56; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; flex: 1; min-width: 0; }
+  .form-input:focus { outline: none; border-color: #3b82f6; }
+  .form-select { background: #0f172a; border: 1px solid #2d3f56; color: #e2e8f0; padding: 8px 10px; border-radius: 6px; font-size: 13px; }
+  .filter-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .filter-tag-row { display: flex; align-items: center; gap: 8px; background: #1e293b; border: 1px solid #2d3f56; border-radius: 7px; padding: 7px 12px; }
+  .type-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 5px; white-space: nowrap; }
+  .type-category_code { background: rgba(59,130,246,.2); color: #60a5fa; }
+  .type-function_code  { background: rgba(139,92,246,.2); color: #a78bfa; }
+  .type-part_number    { background: rgba(16,185,129,.2); color: #34d399; }
+  .type-part_type      { background: rgba(249,115,22,.2); color: #fb923c; }
+  .type-account_type   { background: rgba(20,184,166,.2); color: #2dd4bf; }
+  .type-boutique_type  { background: rgba(139,92,246,.2); color: #a78bfa; }
+  .remove-btn { background: none; border: none; color: #475569; cursor: pointer; font-size: 18px; line-height: 1; padding: 0 2px; }
+  .remove-btn:hover { color: #ef4444; }
+  .add-filter-row { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
+  .lookup-wrap { position: relative; flex: 1; min-width: 180px; }
+  .lookup-input { width: 100%; background: #1e293b; border: 1px solid #2d3f56; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+  .lookup-input:focus { outline: none; border-color: #3b82f6; }
+  .lookup-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #1e293b; border: 1px solid #2d3f56; border-radius: 8px; z-index: 100; max-height: 200px; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+  .lookup-item { padding: 9px 12px; cursor: pointer; border-bottom: 1px solid rgba(45,63,86,.4); }
+  .lookup-item:last-child { border-bottom: none; }
+  .lookup-item:hover { background: rgba(59,130,246,.1); }
+  .lookup-item-val { font-size: 13px; font-weight: 600; }
+  .lookup-item-sub { font-size: 11px; color: #64748b; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .logic-hint { font-size: 12px; color: #64748b; background: #0f172a; border: 1px solid #2d3f56; border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; line-height: 1.7; }
+  .logic-hint strong { color: #94a3b8; }
+  .part-type-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .part-type-chip { display: flex; align-items: center; gap: 5px; cursor: pointer; background: #1e293b; border: 1px solid #2d3f56; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 600; color: #94a3b8; transition: all .15s; user-select: none; }
+  .part-type-chip:hover { border-color: #fb923c; color: #fb923c; }
+  .part-type-chip input { display: none; }
+  .part-type-chip.checked { background: rgba(249,115,22,.15); border-color: #fb923c; color: #fb923c; }
+  .part-type-chip.disabled { opacity: .4; pointer-events: none; }
+  .stat-method-group { margin-bottom: 14px; }
+  .stat-method-label { font-size: 13px; font-weight: 700; color: #94a3b8; margin-bottom: 10px; }
+  .stat-method-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .stat-radio-item { display: flex; align-items: center; gap: 8px; cursor: pointer; background: #1e293b; border: 1px solid #2d3f56; border-radius: 8px; padding: 10px 14px; transition: all .15s; flex: 1; min-width: 130px; }
+  .stat-radio-item:hover { border-color: #3b82f6; }
+  .stat-radio-item input[type=radio] { accent-color: #3b82f6; width: 15px; height: 15px; }
+  .stat-radio-item.selected { border-color: #3b82f6; background: rgba(59,130,246,.1); }
+  .stat-radio-info { display: flex; flex-direction: column; }
+  .stat-radio-name { font-size: 13px; font-weight: 700; }
+  .stat-radio-desc { font-size: 11px; color: #64748b; margin-top: 1px; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #2d3f56; border-top-color: #3b82f6; border-radius: 50%; animation: spin .7s linear infinite; margin-right: 6px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty-state { text-align: center; padding: 40px 20px; color: #64748b; }
+  .empty-state .big { font-size: 36px; margin-bottom: 10px; }
+  .section-page { display: none; }
+  .section-page.active { display: block; }
+  .wd-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .wd-calendar { display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; margin-bottom: 16px; }
+  .wd-day-head { text-align: center; font-size: 11px; font-weight: 700; color: #475569; padding: 4px 0; }
+  .wd-day-head.sun { color: #ef4444; }
+  .wd-day-head.sat { color: #3b82f6; }
+  .wd-day-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; border: 1.5px solid #2d3f56; background: #0f172a; color: #64748b; transition: all .12s; user-select: none; }
+  .wd-day-cell:hover { border-color: #3b82f6; color: #93c5fd; }
+  .wd-day-cell.work { background: rgba(16,185,129,.15); border-color: #10b981; color: #10b981; }
+  .wd-day-cell.work:hover { background: rgba(16,185,129,.25); }
+  .wd-day-cell.empty { background: transparent; border-color: transparent; cursor: default; }
+  .wd-day-cell.empty:hover { border-color: transparent; }
+  .wd-summary { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13px; }
+  .wd-count { font-weight: 800; font-size: 20px; color: #10b981; }
+  .wd-legend { display: flex; gap: 14px; font-size: 12px; color: #64748b; }
+  .wd-legend span { display: flex; align-items: center; gap: 5px; }
+  .wd-legend .dot { width: 10px; height: 10px; border-radius: 3px; }
+  .wd-existing-list { display: flex; flex-direction: column; gap: 6px; }
+  .wd-existing-item { display: flex; align-items: center; gap: 10px; background: #0f172a; border: 1px solid #2d3f56; border-radius: 8px; padding: 10px 14px; }
+  .wd-existing-item .info { flex: 1; }
+  .wd-existing-item .name { font-weight: 700; }
+  .wd-existing-item .sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .modal-section-label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .05em; padding: 10px 0 6px; border-top: 1px solid #1e3050; margin-top: 4px; }
+  .modal-section-label:first-child { border-top: none; padding-top: 0; }
+  .mob-sec-btn { display: flex; align-items: center; gap: 5px; padding: 8px 12px; border: none; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; color: #64748b; white-space: nowrap; flex-shrink: 0; transition: all .15s;}
+  .mob-sec-btn.active { background: rgba(59,130,246,.15); color: #3b82f6; }
+  .mob-sec-btn:hover:not(.active) { color: #e2e8f0; background: #253347; }
+  /* person targets table */
+  .pt-input { background: #0f172a; border: 1px solid #2d3f56; color: #e2e8f0; padding: 5px 8px; border-radius: 5px; font-size: 12px; font-weight: 700; text-align: right; outline: none; }
+  .pt-input:focus { border-color: #3b82f6; }
+  .theme-toggle-btn { margin-left: auto; background: transparent; border: 1px solid #2d3f56; color: #64748b; border-radius: 6px; padding: 5px 9px; font-size: 15px; cursor: pointer; transition: all .15s; line-height: 1; flex-shrink: 0; }
+  .theme-toggle-btn:hover { background: #1e293b; color: #e2e8f0; }
+ /* ════ MOBILE ════ */
+@media (max-width: 768px) {
+  .nav { padding: 0 16px; }
+  .nav-brand { font-size: 13px; padding: 12px 0; margin-right: 16px; }
+  .nav-link { padding: 12px 10px; font-size: 12px; }
+  .sidebar { display: none !important; }
+  .layout { flex-direction: column; height: auto; overflow: visible; }
+  .main { padding: 14px 12px 32px; height: auto; overflow: visible; max-width: 100%; }
+  #mobileSectionNav {
+    display: flex !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    background: #1e293b;
+    border-bottom: 1px solid #2d3f56;
+    padding: 4px 12px;
+    gap: 2px;
+    position: sticky;
+    top: 53px;
+    z-index: 100;
+  }
+  #mobileSectionNav::-webkit-scrollbar { display: none; }
+  .card { padding: 14px 12px; }
+  .card-title { font-size: 13px; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .upload-zone { padding: 22px 14px; }
+  .modal-backdrop { padding: 0 !important; align-items: flex-end !important; }
+  .modal-window { max-width: 100% !important; width: 100% !important; max-height: 92vh !important; border-radius: 16px 16px 0 0 !important; }
+  .modal-body { padding: 14px 16px; }
+  .modal-footer { padding: 12px 16px 24px; }
+  .stat-method-options { flex-wrap: wrap; }
+  .stat-radio-item { min-width: calc(50% - 4px); flex: 0 0 calc(50% - 4px); }
+  .form-row { flex-direction: column; gap: 4px; }
+  .form-row label { padding-top: 0; min-width: unset; }
+  .add-filter-row { flex-direction: column; }
+  .counts-grid { grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); }
+  .btn { padding: 7px 12px; font-size: 12px; }
+  .btn-sm { padding: 4px 8px; font-size: 11px; }
+  .wd-controls { gap: 6px; }
+  .wd-existing-item { flex-wrap: wrap; }
+  .wd-existing-item > .info { flex-basis: 100%; }
+  #revManualGrid .table-scroll { overflow-x: auto; }
+  #revManualGrid table { min-width: 680px; }
+}
+@media (max-width: 480px) {
+  .nav-brand { font-size: 12px; }
+  .nav-link { font-size: 11px; padding: 12px 8px; }
+  .main { padding: 10px 10px 24px; }
+  .mob-sec-btn { font-size: 11px; padding: 7px 9px; }
+  .stat-radio-item { min-width: 100%; flex: 0 0 100%; }
+}
+ 
+</style>
+</head>
+<body>
+
+
+<nav class="nav">
+  <span class="nav-brand">🚗 Volvo DMS</span>
+  <a href="/performance.html" class="nav-link">🎯 業績指標與預估</a>
+  <a href="/stats.html" class="nav-link">📊 各廠明細</a>
+  <a href="/query.html" class="nav-link">🔍 資料查詢</a>
+  <a href="/monthly_report.html" class="nav-link">📋 月報</a>
+  <a href="/bonus.html" class="nav-link">💰 獎金表</a>
+  <a href="/settings.html" class="nav-link active">⚙️ 設定</a>
+  <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()" title="切換主題">☀️</button>
+</nav>
+
+<!-- ══ MODAL #1 — 指標銷售設定編輯器 ══ -->
+<div class="modal-backdrop" id="saModal">
+  <div class="modal-window">
+    <div class="modal-header">
+      <div class="modal-header-title" id="editorTitle">新增設定</div>
+      <button class="modal-close" onclick="cancelEdit()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>名稱</label>
+        <input type="text" id="cfgName" class="form-input" placeholder="例：機油銷售、鋼圈銷售..." maxlength="100">
+      </div>
+      <div class="form-row">
+        <label>說明</label>
+        <input type="text" id="cfgDesc" class="form-input" placeholder="（選填）" maxlength="200">
+      </div>
+      <div class="modal-section-label">篩選條件</div>
+      <div class="logic-hint">
+        <strong>不同類型之間 AND（且）</strong> — 例：類別碼 93 且 功能碼 1832<br>
+        <strong>同類型多個值 OR（或）</strong> — 例：加入多個零件編號，符合任一即納入
+      </div>
+      <div class="filter-list" id="filterList"></div>
+      <div style="background:#0f172a;border:1px solid #2d3f56;border-radius:8px;padding:12px;margin-bottom:14px">
+        <div style="font-size:11px;color:#64748b;font-weight:700;margin-bottom:8px">新增條件</div>
+        <div class="add-filter-row">
+          <select id="addType" class="form-select" onchange="onTypeChange()">
+            <option value="category_code">零件類別碼</option>
+            <option value="function_code">功能碼</option>
+            <option value="part_number">零件編號</option>
+            <option value="part_type">付款類別</option>
+            <option value="work_code">工資代碼</option>
+          </select>
+          <div class="lookup-wrap" id="lookupWrap">
+            <input type="text" id="addValue" class="lookup-input" placeholder="輸入代碼或名稱搜尋..." oninput="debounceLookup()" autocomplete="off">
+            <div class="lookup-dropdown" id="lookupDropdown" style="display:none"></div>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btnAddFilter" onclick="addFilter()">＋ 加入</button>
+        </div>
+        <div id="partTypePanel" style="display:none;margin-top:10px">
+          <div class="part-type-grid" id="partTypeCheckboxes"></div>
+          <button class="btn btn-secondary btn-sm" onclick="addPartTypeFilters()">＋ 加入勾選項目</button>
+        </div>
+        <div id="workCodePanel" style="display:none;margin-top:10px;background:#1e293b;border:1px solid #2d3f56;border-radius:8px;padding:10px">
+          <div style="font-size:11px;color:#64748b;margin-bottom:8px">精確：<code>17300</code>　或　範圍：<code>00030-00033</code>（以連字號分隔）</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="workCodeInput" class="lookup-input" placeholder="例：17300 或 00030-00033" style="flex:1">
+            <button class="btn btn-secondary btn-sm" onclick="addWorkCodeFilter()">＋ 加入</button>
+          </div>
+        </div>
+        <div id="addHint" style="font-size:11px;color:#64748b;margin-top:6px;min-height:16px"></div>
+      </div>
+      <div class="modal-section-label">統計方式</div>
+      <div class="stat-method-options">
+        <label class="stat-radio-item selected" id="smLabel-amount" onclick="selectStatMethod('amount')">
+          <input type="radio" name="stat_method" value="amount" checked>
+          <div class="stat-radio-info"><span class="stat-radio-name">💰 銷售金額</span><span class="stat-radio-desc">加總售價（元）</span></div>
+        </label>
+        <label class="stat-radio-item" id="smLabel-quantity" onclick="selectStatMethod('quantity')">
+          <input type="radio" name="stat_method" value="quantity">
+          <div class="stat-radio-info"><span class="stat-radio-name">📦 數量</span><span class="stat-radio-desc">加總銷售件數</span></div>
+        </label>
+        <label class="stat-radio-item" id="smLabel-count" onclick="selectStatMethod('count')">
+          <input type="radio" name="stat_method" value="count">
+          <div class="stat-radio-info"><span class="stat-radio-name">🧾 筆數</span><span class="stat-radio-desc">計算銷售單數</span></div>
+        </label>
+      </div>
+      <div class="modal-section-label">人員分類（可同時勾選兩個）</div>
+      <div style="font-size:12px;color:#64748b;background:#0f172a;border:1px solid #2d3f56;border-radius:6px;padding:8px 12px;margin-bottom:10px;line-height:1.7">
+        同時勾選兩個時，此設定會同時出現在「銷售人員」與「技師施工」兩個分頁<br>
+        <strong>銷售人員</strong>：依 parts_sales.sales_person 統計<br>
+        <strong>技師施工</strong>：依 parts_sales.pickup_person 統計
+      </div>
+      <div class="stat-method-options">
+        <div class="stat-radio-item selected" id="ptLabel-sales_person" onclick="togglePersonType('sales_person')">
+          <input type="checkbox" name="person_type" value="sales_person" checked style="pointer-events:none;accent-color:#3b82f6;width:15px;height:15px">
+          <div class="stat-radio-info"><span class="stat-radio-name">👤 銷售人員</span><span class="stat-radio-desc">SA / 業務員（sales_person）</span></div>
+        </div>
+        <div class="stat-radio-item" id="ptLabel-pickup_person" onclick="togglePersonType('pickup_person')">
+          <input type="checkbox" name="person_type" value="pickup_person" style="pointer-events:none;accent-color:#f59e0b;width:15px;height:15px">
+          <div class="stat-radio-info"><span class="stat-radio-name">🔧 技師施工</span><span class="stat-radio-desc">領料 / 施工技師（pickup_person）</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="cancelEdit()">取消</button>
+      <button class="btn btn-primary" id="btnSaveCfg" onclick="saveConfig()">儲存設定</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL #2 — 工資代碼設定編輯器 ══ -->
+<div class="modal-backdrop" id="twcModal">
+  <div class="modal-window">
+    <div class="modal-header">
+      <div class="modal-header-title" id="twcEditorTitle">新增設定</div>
+      <button class="modal-close" onclick="twcCancelEdit()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>名稱</label>
+        <input type="text" id="twcName" class="form-input" placeholder="例：保養台數、洗車台數、美容台數..." maxlength="100">
+      </div>
+      <div class="form-row">
+        <label>說明</label>
+        <input type="text" id="twcDesc" class="form-input" placeholder="（選填）" maxlength="200">
+      </div>
+      <div class="modal-section-label">工資代碼（work_code）</div>
+      <div class="filter-list" id="twcCodeList"></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+        <input type="text" id="twcCodeInput" class="form-input" placeholder="精確：17300 或 範圍：00030-00033" style="max-width:260px"
+          onkeydown="if(event.key==='Enter'){addTwcCode();event.preventDefault()}">
+        <button class="btn btn-secondary btn-sm" onclick="addTwcCode()">＋ 加入</button>
+        <span id="twcCodeHint" style="font-size:11px;color:#64748b"></span>
+      </div>
+      <div class="modal-section-label">帳類篩選（可多選，留空=全部）</div>
+      <div class="part-type-grid" id="twcAccountChips"></div>
+      <div class="modal-section-label">統計方式</div>
+      <div class="stat-method-options">
+        <label class="stat-radio-item selected" id="twcSmLabel-count" onclick="selectTwcMethod('count')">
+          <input type="radio" name="twc_method" value="count" checked>
+          <div class="stat-radio-info"><span class="stat-radio-name">🚗 台數</span><span class="stat-radio-desc">COUNT(DISTINCT work_order)</span></div>
+        </label>
+        <label class="stat-radio-item" id="twcSmLabel-amount" onclick="selectTwcMethod('amount')">
+          <input type="radio" name="twc_method" value="amount">
+          <div class="stat-radio-info"><span class="stat-radio-name">💰 工資金額</span><span class="stat-radio-desc">SUM(wage)</span></div>
+        </label>
+        <label class="stat-radio-item" id="twcSmLabel-hours" onclick="selectTwcMethod('hours')">
+          <input type="radio" name="twc_method" value="hours">
+          <div class="stat-radio-info"><span class="stat-radio-name">⏱️ 工時</span><span class="stat-radio-desc">SUM(standard_hours)</span></div>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="twcCancelEdit()">取消</button>
+      <button class="btn btn-primary" id="twcBtnSave" onclick="twcSave()">儲存設定</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL #3 — 業績指標編輯器 ══ -->
+<div class="modal-backdrop" id="perfModal">
+  <div class="modal-window" style="max-width:740px">
+    <div class="modal-header">
+      <div class="modal-header-title" id="perfEditorTitle">新增指標</div>
+      <button class="modal-close" onclick="perfCancelEdit()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>名稱</label>
+        <input type="text" id="perfName" class="form-input" placeholder="例：機油銷售量、精品業績..." maxlength="100">
+      </div>
+      <div class="form-row">
+        <label>說明</label>
+        <input type="text" id="perfDesc" class="form-input" placeholder="（選填）" maxlength="200">
+      </div>
+      <div class="form-row">
+        <label>類型</label>
+        <select id="perfType" class="form-select" onchange="onPerfTypeChange()" style="flex:none">
+          <option value="repair_income">🔧 維修收入（合計未稅）</option>
+          <option value="repair_subfield">🔨 維修收入（子欄位）— 鈑烤/工資等</option>
+          <option value="parts">🔩 零件銷售（依篩選條件）</option>
+          <option value="boutique">💎 精品 / 配件銷售（需型錄）</option>
+          <option value="tech_wage">🚗 工資代碼統計（保養/洗車/美容等）</option>
+        </select>
+      </div>
+      <div id="perfRepairOptions">
+        <div class="hint" style="margin:8px 0 10px">追蹤維修收入合計（未稅），可選擇性篩選特定帳類。<strong>留空 = 統計全部帳類。</strong></div>
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">帳類篩選（可多選，留空=全部）</div>
+        <div class="part-type-grid" id="perfRepairAccountTypes"></div>
+      </div>
+      <div id="perfPartsOptions" style="display:none">
+        <div class="logic-hint" style="margin-bottom:10px">
+          <strong>不同類型之間 AND</strong>，<strong>同類型多個值 OR</strong>
+        </div>
+        <div class="filter-list" id="perfFilterList"></div>
+        <div style="background:#0f172a;border:1px solid #2d3f56;border-radius:8px;padding:12px;margin-bottom:14px">
+          <div style="font-size:11px;color:#64748b;font-weight:700;margin-bottom:8px">新增條件</div>
+          <div class="add-filter-row">
+            <select id="perfAddType" class="form-select" onchange="onPerfFilterTypeChange()">
+              <option value="category_code">零件類別碼</option>
+              <option value="function_code">功能碼</option>
+              <option value="part_number">零件編號</option>
+              <option value="part_type">付款類別</option>
+            </select>
+            <div class="lookup-wrap" id="perfLookupWrap">
+              <input type="text" id="perfAddValue" class="lookup-input" placeholder="輸入代碼或名稱搜尋..." oninput="debouncePerfLookup()" autocomplete="off">
+              <div class="lookup-dropdown" id="perfLookupDropdown" style="display:none"></div>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="perfBtnAddFilter" onclick="addPerfFilter()">＋ 加入</button>
+          </div>
+          <div id="perfPartTypePanel" style="display:none;margin-top:10px">
+            <div class="part-type-grid" id="perfPartTypeCheckboxes"></div>
+            <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="addPerfPartTypeFilters()">＋ 加入勾選</button>
+          </div>
+        </div>
+        <div class="stat-method-group">
+          <div class="stat-method-label">統計方式</div>
+          <div class="stat-method-options">
+            <label class="stat-radio-item selected" id="perfSmLabel-amount" onclick="selectPerfStatMethod('amount')">
+              <input type="radio" name="perf_stat_method" value="amount" checked>
+              <div class="stat-radio-info"><span class="stat-radio-name">💰 金額</span><span class="stat-radio-desc">加總售價（元）</span></div>
+            </label>
+            <label class="stat-radio-item" id="perfSmLabel-qty" onclick="selectPerfStatMethod('qty')">
+              <input type="radio" name="perf_stat_method" value="qty">
+              <div class="stat-radio-info"><span class="stat-radio-name">📦 數量</span><span class="stat-radio-desc">加總銷售件數</span></div>
+            </label>
+            <label class="stat-radio-item" id="perfSmLabel-count" onclick="selectPerfStatMethod('count')">
+              <input type="radio" name="perf_stat_method" value="count">
+              <div class="stat-radio-info"><span class="stat-radio-name">🧾 筆數</span><span class="stat-radio-desc">計算銷售單數</span></div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div id="perfBoutiqueOptions" style="display:none">
+        <div class="hint" style="margin:8px 0 10px">從 parts_sales JOIN parts_catalog 取得精品/配件銷售金額。需先上傳零件型錄。</div>
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">品項類型（精品 / 配件）</div>
+        <div class="part-type-grid" id="perfBoutiqueTypeChips"></div>
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin:14px 0 8px">帳類篩選（Paycode，留空=全部）</div>
+        <div class="part-type-grid" id="perfBoutiqueAccountChips"></div>
+      </div>
+      <div id="perfTechWageOptions" style="display:none">
+        <div class="hint" style="margin:8px 0 12px">
+          依 tech_performance 的 <strong>work_code</strong> 統計台數/工資金額/工時。<br>
+          輸入工資代碼：精確碼 <code>17300</code>，或範圍 <code>00030-00033</code>（連字號分隔）。
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">工資代碼</div>
+        <div class="filter-list" id="perfTwcCodeList"></div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+          <input type="text" id="perfTwcCodeInput" class="form-input" placeholder="精確：17300 或 範圍：00030-00033" style="max-width:260px"
+            onkeydown="if(event.key==='Enter'){addPerfTwcCode();event.preventDefault()}">
+          <button class="btn btn-secondary btn-sm" onclick="addPerfTwcCode()">＋ 加入</button>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">帳類篩選（留空=全部）</div>
+        <div class="part-type-grid" id="perfTwcAccountChips"></div>
+        <div class="stat-method-group" style="margin-top:14px">
+          <div class="stat-method-label">統計方式</div>
+          <div class="stat-method-options">
+            <label class="stat-radio-item selected" id="perfTwcSmLabel-count" onclick="selectPerfTwcMethod('count')">
+              <input type="radio" name="perf_twc_method" value="count" checked>
+              <div class="stat-radio-info"><span class="stat-radio-name">🚗 台數</span><span class="stat-radio-desc">COUNT(DISTINCT 工單)</span></div>
+            </label>
+            <label class="stat-radio-item" id="perfTwcSmLabel-amount" onclick="selectPerfTwcMethod('amount')">
+              <input type="radio" name="perf_twc_method" value="amount">
+              <div class="stat-radio-info"><span class="stat-radio-name">💰 工資金額</span><span class="stat-radio-desc">SUM(wage)</span></div>
+            </label>
+            <label class="stat-radio-item" id="perfTwcSmLabel-hours" onclick="selectPerfTwcMethod('hours')">
+              <input type="radio" name="perf_twc_method" value="hours">
+              <div class="stat-radio-info"><span class="stat-radio-name">⏱️ 工時</span><span class="stat-radio-desc">SUM(standard_hours)</span></div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div id="perfSubfieldOptions" style="display:none">
+        <div class="hint" style="margin:8px 0 12px">
+          選擇<strong>工單篩選模式</strong>和<strong>判斷欄位</strong>，搭配帳類篩選，可精確設定鈑烤、工資等分項指標。
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">⚙️ 工單篩選模式</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+          <label class="stat-radio-item selected" id="woModeLabel-wo_has" onclick="selectWoMode('wo_has')">
+            <input type="radio" name="wo_mode" value="wo_has" checked>
+            <div class="stat-radio-info">
+              <span class="stat-radio-name">🎯 包含指定欄位的工單 → SUM(合計未稅)</span>
+              <span class="stat-radio-desc">工單中只要有任一勾選欄位 &gt; 0，就計入整張工單金額。<strong>用於：自費鈑烤</strong></span>
+            </div>
+          </label>
+          <label class="stat-radio-item" id="woModeLabel-wo_exclude" onclick="selectWoMode('wo_exclude')">
+            <input type="radio" name="wo_mode" value="wo_exclude">
+            <div class="stat-radio-info">
+              <span class="stat-radio-name">🚫 排除指定欄位的工單 → SUM(合計未稅)</span>
+              <span class="stat-radio-desc">工單中所有勾選欄位都 = 0，才計入整張工單金額。<strong>用於：一般收入扣鈑烤</strong></span>
+            </div>
+          </label>
+          <label class="stat-radio-item" id="woModeLabel-sum" onclick="selectWoMode('sum')">
+            <input type="radio" name="wo_mode" value="sum">
+            <div class="stat-radio-info">
+              <span class="stat-radio-name">➕ 直接加總子欄位數值</span>
+              <span class="stat-radio-desc">SUM(欄位1 ＋ 欄位2 ＋…)，不看整張工單金額。<strong>用於：保險鈑烤</strong></span>
+            </div>
+          </label>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">📊 判斷欄位（可多選）</div>
+        <div class="part-type-grid" id="perfSubfieldChips" style="margin-bottom:14px"></div>
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">帳類篩選（可多選，留空=全部）</div>
+        <div class="part-type-grid" id="perfSubfieldAccountChips"></div>
+      </div>
+      <div class="form-row" style="margin-top:14px">
+        <label>單位</label>
+        <input type="text" id="perfUnit" class="form-input" placeholder="留空自動判斷（金額=元，數量=件）" maxlength="20" style="max-width:280px">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="perfCancelEdit()">取消</button>
+      <button class="btn btn-primary" id="perfBtnSave" onclick="perfSave()">儲存指標</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Main Layout ══ -->
+<div id="mobileSectionNav" style="display:none">
+  <button class="mob-sec-btn active" id="mob-menu-upload" onclick="showSection('upload')">📤 上傳</button>
+  <button class="mob-sec-btn" id="mob-menu-dbstatus" onclick="showSection('dbstatus')">🗄️ 資料庫</button>
+  <button class="mob-sec-btn" id="mob-menu-sa-config" onclick="showSection('sa-config')">📋 指標銷售</button>
+  <button class="mob-sec-btn" id="mob-menu-working-days" onclick="showSection('working-days')">📅 工作天</button>
+  <button class="mob-sec-btn" id="mob-menu-beauty-op-hours" onclick="showSection('beauty-op-hours')">🎨 美容工時</button>
+ <button class="mob-sec-btn" id="mob-menu-tech-wage-config" onclick="showSection('tech-wage-config')">🔧 工資碼</button>
+  <button class="mob-sec-btn" id="mob-menu-revenue-targets" onclick="showSection('revenue-targets')">📈 營收目標</button>
+  <button class="mob-sec-btn" id="mob-menu-performance" onclick="showSection('performance')">🛒 精品銷售</button>
+  <button class="mob-sec-btn" id="mob-menu-person-targets" onclick="showSection('person-targets')">👤 個人目標</button>
+  <button class="mob-sec-btn" id="mob-menu-bay-config" onclick="showSection('bay-config')">🔧 工位</button>
+  <button class="mob-sec-btn" id="mob-menu-password" onclick="showSection('password')">🔑 密碼</button>
+  <button class="mob-sec-btn" id="mob-menu-users" onclick="showSection('users')">👥 使用者</button>
+  <button class="mob-sec-btn" id="mob-menu-auditlog" onclick="showSection('auditlog')">📋 操作紀錄</button>
+</div>
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">資料管理</div>
+      <div class="sidebar-item active" onclick="showSection('upload')" id="menu-upload">
+        <span class="icon">📤</span> 上傳 Excel
+      </div>
+      <div class="sidebar-item" onclick="showSection('dbstatus')" id="menu-dbstatus">
+        <span class="icon">🗄️</span> 資料庫狀態
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">統計設定</div>
+      <div class="sidebar-item" onclick="showSection('sa-config')" id="menu-sa-config">
+        <span class="icon">📋</span> 指標銷售與施工
+      </div>
+      <div class="sidebar-item" onclick="showSection('working-days')" id="menu-working-days">
+        <span class="icon">📅</span> 工作天數
+      </div>
+      <div class="sidebar-item" onclick="showSection('beauty-op-hours')" id="menu-beauty-op-hours">
+        <span class="icon">🎨</span> 美容工時代碼
+      </div>
+     <div class="sidebar-item" onclick="showSection('tech-wage-config')" id="menu-tech-wage-config">
+        <span class="icon">🔧</span> 工資代碼設定
+      </div>
+      <div class="sidebar-item" onclick="showSection('revenue-targets')" id="menu-revenue-targets">
+        <span class="icon">📈</span> 營收目標
+      </div>
+      <div class="sidebar-item" onclick="showSection('performance')" id="menu-performance">
+        <span class="icon">🛒</span> 零配精品銷售
+      </div>
+      <div class="sidebar-item" onclick="showSection('person-targets')" id="menu-person-targets">
+        <span class="icon">👤</span> 個人業績目標
+      </div>
+     <div class="sidebar-item" onclick="showSection('bay-config')" id="menu-bay-config">
+     <span class="icon">🔧</span> 工位設定
+     </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">系統</div>
+      <div class="sidebar-item" onclick="showSection('password')" id="menu-password">
+        <span class="icon">🔑</span> 管理員密碼
+      </div>
+     <div class="sidebar-item" onclick="showSection('users')" id="menu-users">
+        <span class="icon">👥</span> 使用者管理
+      </div>
+      <div class="sidebar-item" onclick="showSection('auditlog')" id="menu-auditlog">
+        <span class="icon">📋</span> 操作紀錄
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- ── 上傳 Excel ── -->
+    <div class="section-page active" id="section-upload">
+      <div class="page-title">📤 上傳 Excel</div>
+      <p class="page-sub">將 DMS 匯出的四種報表上傳至資料庫</p>
+      <div class="hint">
+        ⚠️ <strong>檔名需包含據點和期間</strong>，例如：<br>
+        <code>維修收入分類明細_AMA_202501.xlsx</code>　
+        <code>技師績效報表_AMC_202501.xlsx</code>　
+        <code>零件銷售明細_AMD_202501.xlsx</code>　
+        <code>業務查詢_AMA_202501.xlsx</code>
+      </div>
+      <div class="card">
+        <div class="card-title">選擇檔案</div>
+        <div class="upload-zone" id="zone" onclick="document.getElementById('fileInput').click()">
+          <div class="icon">📊</div>
+          <strong>拖拉檔案到這裡，或點擊選擇</strong>
+          <p>支援 .xlsx / .xls，最多 8 個</p>
+        </div>
+        <input type="file" id="fileInput" multiple accept=".xlsx,.xls">
+        <div id="fileList" style="margin-top:10px"></div>
+        <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
+          <button class="btn btn-primary" id="btnUpload" disabled onclick="doUpload()">上傳</button>
+          <span id="uploadStatus" style="font-size:13px;color:#64748b"></span>
+        </div>
+      </div>
+      <div class="card" id="resultsCard" style="display:none">
+        <div class="card-title">上傳結果</div>
+        <div id="results"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📜 最近上傳紀錄 <span class="card-title-note"><button class="btn btn-secondary btn-sm" onclick="loadHistory()">重新整理</button></span></div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>時間</th><th>檔案</th><th>類型</th><th>據點</th><th>期間</th><th class="num">筆數</th><th>狀態</th></tr></thead>
+            <tbody id="historyBody"><tr><td colspan="7" style="color:#64748b;padding:16px"><span class="spinner"></span>載入中</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 資料庫狀態 ── -->
+    <div class="section-page" id="section-dbstatus">
+      <div class="page-title">🗄️ 資料庫狀態</div>
+      <p class="page-sub">各資料表目前的筆數</p>
+      <div class="card">
+        <div class="card-title">各表格筆數 <span class="card-title-note"><button class="btn btn-secondary btn-sm" onclick="loadCounts()">重新整理</button></span></div>
+        <div class="counts-grid" id="counts"><div style="color:#64748b;font-size:13px"><span class="spinner"></span>載入中</div></div>
+      </div>
+    </div>
+
+    <!-- ── 指標銷售與施工設定 ── -->
+    <div class="section-page" id="section-sa-config">
+      <div class="page-title">📋 指標銷售與施工設定</div>
+      <p class="page-sub">設定追蹤哪些零件的銷售量或施工台數，可分別統計「銷售人員」或「技師施工」業績</p>
+      <div class="card">
+        <div class="card-title">
+          設定清單
+          <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="startNewConfig()">＋ 新增設定</button>
+        </div>
+        <div class="config-list" id="configList" style="margin-top:4px">
+          <div style="color:#64748b;font-size:13px"><span class="spinner"></span>載入中</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 工作天數設定 ── -->
+    <div class="section-page" id="section-working-days">
+      <div class="page-title">📅 工作天數設定</div>
+      <p class="page-sub">設定各據點每個月的實際營業日，用於計算日均進廠台數</p>
+      <div class="hint">
+        💡 <strong>為什麼需要手動設定？</strong><br>
+        系統預設用「有開工單的日期」自動判斷工作天，但若颱風假、連假補班、或節日異常操作，可能導致誤判。
+        手動設定後，「每日進廠台數」的日均計算將使用設定值，並顯示 ✅ 手動設定標示。
+      </div>
+      <div class="card">
+        <div class="card-title">🗓️ 設定營業日</div>
+<!-- ── WD 模式切換 ── -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+          <button id="wdModeBtn-service" onclick="switchWdMode('service')"
+            style="padding:7px 18px;border:1.5px solid #3b82f6;border-radius:7px;background:rgba(59,130,246,.15);color:#3b82f6;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s">
+            🏭 服務廠工作天數
+          </button>
+          <button id="wdModeBtn-employee" onclick="switchWdMode('employee')"
+            style="padding:7px 18px;border:1.5px solid #2d3f56;border-radius:7px;background:transparent;color:#64748b;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s">
+            👷 員工工作天數
+          </button>
+          <span style="font-size:11px;color:#475569">↑ 技師工時目標使用「員工工作天」計算</span>
+        </div>
+        <div id="wdEmployeeNote" style="display:none;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:11px 14px;font-size:12px;color:#94a3b8;line-height:1.9;margin-bottom:12px">
+          👷 <strong style="color:#10b981">員工工作天數</strong>：員工每週固定上班
+          <strong style="color:#e2e8f0">5 天（週一至週五）</strong>，遇連假時需手動取消。<br>
+          此設定用於計算 <strong style="color:#e2e8f0">技師工時目標</strong>（工作天 × 8H × 利用率）。<br>
+          不需選擇據點，三站技師共用同一份員工工作曆。
+        </div>
+        <div class="wd-controls">
+          <div id="wdBranchWrap" style="display:inline-flex">
+          <select id="wdBranch" class="form-select" onchange="onWdBranchChange()">
+            <option value="ALL">全部（三站同步）</option>
+            <option value="AMA">AMA</option>
+            <option value="AMC">AMC</option>
+            <option value="AMD">AMD</option>
+          </select>
+          </div>
+          <select id="wdPeriod" class="form-select" style="min-width:140px">
+            <option value="">選擇期間...</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="loadWdCalendar()">載入</button>
+          <div id="wdConfigStatus" style="font-size:12px;color:#64748b;margin-left:4px"></div>
+        </div>
+        <div id="wdCalendarWrap" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-size:14px;font-weight:700" id="wdMonthTitle"></div>
+            <div class="wd-legend">
+              <span><div class="dot" style="background:rgba(16,185,129,.3);border:1px solid #10b981"></div>營業日</span>
+              <span><div class="dot" style="background:#0f172a;border:1px solid #2d3f56"></div>休息日</span>
+            </div>
+          </div>
+          <div class="wd-calendar" id="wdCalHeader">
+            <div class="wd-day-head sun">日</div><div class="wd-day-head">一</div><div class="wd-day-head">二</div>
+            <div class="wd-day-head">三</div><div class="wd-day-head">四</div><div class="wd-day-head">五</div>
+            <div class="wd-day-head sat">六</div>
+          </div>
+          <div class="wd-calendar" id="wdCalendar"></div>
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+            <button class="btn btn-secondary btn-sm" onclick="wdSelectWeekdays()">選週一到五</button>
+            <button class="btn btn-secondary btn-sm" onclick="wdSelectAll()">全選</button>
+            <button class="btn btn-secondary btn-sm" onclick="wdClearAll()">全部清除</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-top:1px solid #2d3f56;flex-wrap:wrap">
+            <div class="wd-summary">
+              <span class="wd-count" id="wdWorkCount">0</span>
+              <span style="color:#64748b;font-size:13px">個營業日</span>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn btn-danger btn-sm" id="btnWdDelete" onclick="deleteWdConfig()" style="display:none">🗑️ 刪除設定（回到自動）</button>
+              <button class="btn btn-primary" onclick="saveWdConfig()" id="btnWdSave">💾 儲存工作天數</button>
+            </div>
+          </div>
+          <div id="wdMsg" style="font-size:13px;min-height:20px;margin-top:4px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">已設定的月份 <span class="card-title-note"><button class="btn btn-secondary btn-sm" onclick="loadWdList()">重新整理</button></span></div>
+        <div id="wdExistingList"><div style="color:#64748b;font-size:13px"><span class="spinner"></span>載入中</div></div>
+      </div>
+    </div>
+
+<!-- ── 美容工時代碼 ── -->
+    <div class="section-page" id="section-beauty-op-hours">
+      <div class="page-title">🎨 美容工時代碼設定</div>
+      <p class="page-sub">設定各工資代碼對應的標準工時，美容技師實績工時將依此計算</p>
+      <div class="card">
+        <div class="card-title">新增 / 編輯代碼</div>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:4px">
+          <div>
+            <div style="font-size:11px;color:#64748b;margin-bottom:4px">工資代碼</div>
+            <input id="bohOpCode" class="form-input" style="width:110px" placeholder="例：00032">
+          </div>
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:11px;color:#64748b;margin-bottom:4px">作業內容</div>
+            <input id="bohDesc" class="form-input" style="width:100%" placeholder="例：精緻清潔_40車系">
+          </div>
+          <div>
+            <div style="font-size:11px;color:#64748b;margin-bottom:4px">標準工時 (H)</div>
+            <input id="bohHours" class="form-input" style="width:90px" type="number" min="0" step="0.1" placeholder="0.6">
+          </div>
+          <button class="btn btn-primary" onclick="saveBoh()">💾 儲存</button>
+          <button class="btn btn-secondary" onclick="clearBohForm()">清除</button>
+        </div>
+        <div id="bohMsg" style="font-size:12px;min-height:18px;margin-top:4px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          已設定代碼
+          <span class="card-title-note">
+            <button class="btn btn-secondary btn-sm" onclick="loadBohList()">重新整理</button>
+            <button class="btn btn-secondary btn-sm" onclick="importDefaultBoh()">📥 匯入預設清單</button>
+          </span>
+        </div>
+        <div id="beautyOpHoursList"><div style="color:#64748b;font-size:13px"><span class="spinner"></span>載入中</div></div>
+      </div>
+    </div>
+   
+    <!-- ── 工資代碼設定 ── -->
+    <div class="section-page" id="section-tech-wage-config">
+      <div class="page-title">🔧 工資代碼設定</div>
+      <p class="page-sub">設定追蹤哪些工資代碼（work_code），統計台數 / 金額 / 工時，可搭配帳類篩選</p>
+      <div class="hint" style="margin-bottom:16px">
+        💡 <strong>代碼格式說明</strong>：<br>
+        • 精確代碼：輸入 <code>17300</code> 只抓該代碼<br>
+        • 範圍代碼：輸入 <code>00030-00033</code>（from-to）抓起訖範圍內的所有代碼
+      </div>
+      <div class="card">
+        <div class="card-title">
+          設定清單
+          <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="twcStartNew()">＋ 新增設定</button>
+        </div>
+        <div class="config-list" id="twcConfigList" style="margin-top:4px">
+          <div style="color:#64748b;font-size:13px"><span class="spinner"></span>載入中</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 營收目標 ── -->
+    <div class="section-page" id="section-revenue-targets">
+      <div class="page-title">📈 營收目標設定</div>
+      <p class="page-sub">設定四大營收（有費/鈑烤/一般/延保）的月目標與去年實績，用於業績指標頁顯示達成率</p>
+      <div class="card">
+        <div class="card-title">📥 Excel 批次匯入</div>
+        <div style="background:#0f172a;border:1px solid #3b82f6;border-radius:10px;padding:16px;margin-bottom:14px">
+          <div style="font-size:13px;font-weight:800;color:#3b82f6;margin-bottom:10px">⭐ 方式 A：直接上傳你的 Excel（推薦）</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.9;margin-bottom:14px">
+            支援「橫式分區」格式：每個營收類型一個區塊，欄是 1月～12月，列是 AMA/AMC/AMD。<br>
+            系統自動識別「<strong>有效營收</strong>」「<strong>鈑烤</strong>」「<strong>一般營收</strong>」「<strong>延保</strong>」四個區塊。
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+            <label id="revTypeLabel-target" onclick="selectRevType('target')"
+              style="display:flex;align-items:center;gap:8px;cursor:pointer;background:rgba(59,130,246,.15);border:1.5px solid #3b82f6;border-radius:8px;padding:10px 16px;flex:1;min-width:180px">
+              <input type="radio" name="rev_data_type" value="target" checked style="accent-color:#3b82f6;width:15px;height:15px">
+              <div><div style="font-size:13px;font-weight:800;color:#3b82f6">🎯 月目標</div><div style="font-size:11px;color:#64748b;margin-top:2px">這份 Excel 是今年的月目標</div></div>
+            </label>
+            <label id="revTypeLabel-last_year" onclick="selectRevType('last_year')"
+              style="display:flex;align-items:center;gap:8px;cursor:pointer;background:#1e293b;border:1.5px solid #2d3f56;border-radius:8px;padding:10px 16px;flex:1;min-width:180px">
+              <input type="radio" name="rev_data_type" value="last_year" style="accent-color:#10b981;width:15px;height:15px">
+              <div><div style="font-size:13px;font-weight:800;color:#94a3b8">📅 去年實績</div><div style="font-size:11px;color:#64748b;margin-top:2px">這份 Excel 是去年的實際結果</div></div>
+            </label>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <select id="revNativeYear" class="form-select"><option value="">選擇年份...</option></select>
+            <input type="file" id="revNativeFileInput" accept=".xlsx,.xls" style="display:none" onchange="uploadRevNativeFile(this)">
+            <button class="btn btn-primary" onclick="document.getElementById('revNativeFileInput').click()">📤 上傳</button>
+            <span id="revNativeStatus" style="font-size:13px;color:#64748b"></span>
+          </div>
+          <div id="revNativeResult" style="margin-top:10px"></div>
+        </div>
+        <div style="background:#0f172a;border:1px solid #2d3f56;border-radius:10px;padding:16px">
+          <div style="font-size:13px;font-weight:700;color:#64748b;margin-bottom:10px">方式 B：下載範本填寫後上傳</div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-secondary" onclick="downloadRevTemplate()">⬇️ 下載 CSV 範本</button>
+            <input type="file" id="revFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="uploadRevFile(this)">
+            <button class="btn btn-secondary" onclick="document.getElementById('revFileInput').click()">📤 上傳範本格式</button>
+            <span id="revUploadStatus" style="font-size:13px;color:#64748b"></span>
+          </div>
+          <div id="revUploadResult" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">✏️ 手動設定
+          <span class="card-title-note">
+            <select id="revPeriodSel" class="form-select" style="font-size:12px" onchange="loadRevManual()">
+              <option value="">選擇期間...</option>
+            </select>
+          </span>
+        </div>
+        <div id="revManualGrid" style="display:none">
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th style="min-width:80px">據點</th>
+                  <th class="num">有費營收<br><span style="font-weight:400;color:#64748b">目標</span></th>
+                  <th class="num">有費營收<br><span style="font-weight:400;color:#64748b">去年</span></th>
+                  <th class="num">鈑烤營收<br><span style="font-weight:400;color:#64748b">目標</span></th>
+                  <th class="num">鈑烤營收<br><span style="font-weight:400;color:#64748b">去年</span></th>
+                  <th class="num">一般營收<br><span style="font-weight:400;color:#64748b">目標</span></th>
+                  <th class="num">一般營收<br><span style="font-weight:400;color:#64748b">去年</span></th>
+                  <th class="num">延保營收<br><span style="font-weight:400;color:#64748b">目標</span></th>
+                  <th class="num">延保營收<br><span style="font-weight:400;color:#64748b">去年</span></th>
+                </tr>
+              </thead>
+              <tbody id="revManualBody"></tbody>
+            </table>
+          </div>
+          <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:14px">
+            <div id="revManualMsg" style="font-size:13px;flex:1"></div>
+            <button class="btn btn-primary" onclick="saveRevManual()">💾 儲存</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">已設定月份 <span class="card-title-note"><button class="btn btn-secondary btn-sm" onclick="loadRevList()">重新整理</button></span></div>
+        <div id="revList"><div style="color:#64748b;font-size:13px"><span class="spinner"></span>載入中</div></div>
+      </div>
+    </div>
+
+    <!-- ── 零配精品銷售 ── -->
+    <div class="section-page" id="section-performance">
+      <div class="page-title">🛒 零配精品銷售</div>
+      <p class="page-sub">定義追蹤指標（零件/精品/配件等），設定各月目標與去年實績，用於統計頁業績進度</p>
+      <div class="card">
+        <div class="card-title">📥 Excel 批次匯入目標</div>
+        <div style="background:#0f172a;border:1px solid #3b82f6;border-radius:10px;padding:16px;margin-bottom:14px">
+          <div style="font-size:13px;font-weight:800;color:#3b82f6;margin-bottom:10px">⭐ 方式 A：上傳現有 Excel（推薦）</div>
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+            <label id="perfUpTypeLabel-target" onclick="selectPerfUpType('target')"
+              style="display:flex;align-items:center;gap:8px;cursor:pointer;background:rgba(59,130,246,.15);border:1.5px solid #3b82f6;border-radius:8px;padding:10px 16px;flex:1;min-width:180px">
+              <input type="radio" name="perf_up_type" value="target" checked style="accent-color:#3b82f6;width:15px;height:15px">
+              <div><div style="font-size:13px;font-weight:800;color:#3b82f6">🎯 月目標</div><div style="font-size:11px;color:#64748b;margin-top:2px">這份 Excel 是今年的月目標</div></div>
+            </label>
+            <label id="perfUpTypeLabel-last_year" onclick="selectPerfUpType('last_year')"
+              style="display:flex;align-items:center;gap:8px;cursor:pointer;background:#1e293b;border:1.5px solid #2d3f56;border-radius:8px;padding:10px 16px;flex:1;min-width:180px">
+              <input type="radio" name="perf_up_type" value="last_year" style="accent-color:#10b981;width:15px;height:15px">
+              <div><div style="font-size:13px;font-weight:800;color:#94a3b8">📅 去年實績</div><div style="font-size:11px;color:#64748b;margin-top:2px">這份 Excel 是去年的實際結果</div></div>
+            </label>
+          </div>
+          <div id="perfUpYearHint" style="display:none;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:7px;padding:9px 14px;font-size:12px;color:#f59e0b;line-height:1.7;margin-bottom:10px">
+            ⚠️ <strong>去年實績的年份請選「今年」（例如 2026）</strong>，而不是去年（2025）。<br>
+            原因：系統把去年實績存在「今年各月」的紀錄列，和今年目標放在一起比較。
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <select id="perfUpYear" class="form-select"><option value="">選擇年份...</option></select>
+            <button class="btn btn-secondary btn-sm" onclick="downloadPerfTemplate()">⬇️ 下載指標範本</button>
+            <input type="file" id="perfUpFileInput" accept=".xlsx,.xls" style="display:none" onchange="uploadPerfTargetsFile(this)">
+            <button class="btn btn-primary" onclick="document.getElementById('perfUpFileInput').click()">📤 上傳</button>
+            <span id="perfUpStatus" style="font-size:13px;color:#64748b"></span>
+          </div>
+          <div id="perfUpResult" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          📋 指標定義
+          <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="perfStartNew()">＋ 新增指標</button>
+        </div>
+        <div class="config-list" id="perfMetricList" style="margin-top:4px">
+          <div style="color:#64748b;font-size:13px;padding:8px 0"><span class="spinner"></span>載入中</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎯 目標數值設定</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+          <select id="perfTgtMetric" class="form-select" style="flex:1;min-width:180px" onchange="onPerfTgtMetricChange()">
+            <option value="">選擇指標...</option>
+          </select>
+          <select id="perfTgtPeriod" class="form-select" style="min-width:140px">
+            <option value="">選擇期間...</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="loadPerfTargets()">載入</button>
+        </div>
+        <div id="perfTargetGrid" style="display:none">
+          <div class="hint" id="perfTgtHint" style="margin-bottom:12px"></div>
+          <table>
+            <thead><tr><th style="width:100px">據點</th><th style="text-align:right">月目標</th><th style="text-align:right">去年同期實績</th></tr></thead>
+            <tbody id="perfTgtBody"></tbody>
+          </table>
+          <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:14px">
+            <div id="perfTgtMsg" style="font-size:13px;flex:1"></div>
+            <button class="btn btn-primary" id="perfBtnSaveTgt" onclick="savePerfTargets()">💾 儲存目標</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 個人業績目標 ── -->
+    <div class="section-page" id="section-person-targets">
+      <div class="page-title">👤 個人業績目標設定</div>
+      <p class="page-sub">依廠別總目標分配每位 SA 的個人份額，支援「權重%」自動換算，或直接輸入目標值</p>
+
+      <div class="hint">
+        💡 <strong>使用說明</strong>：<br>
+        1. 選擇指標＋期間＋廠別後按「載入」，系統自動列出此廠有 DMS 資料的人員<br>
+        2. 填入<strong>權重 %</strong>（如 30%）→ 系統自動計算個人目標 = 廠別目標 × 30%<br>
+        3. 或直接在<strong>直接輸入目標</strong>欄填入絕對數值（會優先於權重）<br>
+        4. 按「儲存」後，stats.html 的「👤 個人業績」分頁即可看到每人達成率
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="flex-wrap:wrap;gap:8px">
+          選擇指標 ／ 期間 ／ 廠別
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+          <select id="ptMetricSel" class="form-select" style="flex:2;min-width:180px" onchange="onPtChange()">
+            <option value="">選擇指標...</option>
+          </select>
+          <select id="ptPeriodSel" class="form-select" style="min-width:140px" onchange="onPtChange()">
+            <option value="">選擇期間...</option>
+          </select>
+          <select id="ptBranchSel" class="form-select" style="min-width:90px">
+            <option value="AMA">AMA</option>
+            <option value="AMC">AMC</option>
+            <option value="AMD">AMD</option>
+          </select>
+          <button class="btn btn-primary" onclick="loadPersonTargets()">📂 載入</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePersonTargets()">🗑️ 刪除此設定</button>
+        </div>
+
+        <div id="ptGrid" style="display:none">
+          <div id="ptBranchInfo" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:11px 14px;font-size:12px;color:#94a3b8;line-height:1.8;margin-bottom:14px"></div>
+
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:620px">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:9px 12px;background:#0f172a;color:#64748b;font-size:11px;font-weight:700;border-bottom:1px solid #2d3f56;min-width:100px">人員姓名</th>
+                  <th style="text-align:right;padding:9px 12px;background:#0f172a;color:#10b981;font-size:11px;font-weight:700;border-bottom:1px solid #2d3f56;min-width:90px">本月實績</th>
+                  <th style="text-align:center;padding:9px 12px;background:#0f172a;color:#3b82f6;font-size:11px;font-weight:700;border-bottom:1px solid #2d3f56;min-width:110px">
+                    權重 (%)
+                    <div style="font-size:10px;font-weight:400;color:#475569">廠別目標×%</div>
+                  </th>
+                  <th style="text-align:center;padding:9px 12px;background:#0f172a;color:#f97316;font-size:11px;font-weight:700;border-bottom:1px solid #2d3f56;min-width:120px">
+                    直接輸入目標
+                    <div style="font-size:10px;font-weight:400;color:#475569">優先於權重</div>
+                  </th>
+                  <th style="text-align:right;padding:9px 12px;background:#0f172a;color:#8b5cf6;font-size:11px;font-weight:700;border-bottom:1px solid #2d3f56;min-width:90px">計算後目標</th>
+                  <th style="text-align:center;padding:9px 12px;background:#0f172a;color:#64748b;font-size:11px;font-weight:700;border-bottom:1px solid #2d3f56;min-width:100px">目前達成率</th>
+                  <th style="padding:9px 12px;background:#0f172a;border-bottom:1px solid #2d3f56;width:36px"></th>
+                </tr>
+              </thead>
+              <tbody id="ptTableBody"></tbody>
+              <tfoot id="ptTableFoot"></tfoot>
+            </table>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap">
+            <div id="ptMsg" style="font-size:13px;flex:1;min-height:20px"></div>
+            <button class="btn btn-secondary btn-sm" onclick="addPtPerson()">＋ 手動加入人員</button>
+            <button class="btn btn-primary" onclick="savePersonTargets()">💾 儲存個人目標</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+   <!-- ── 工位設定 ── -->
+<div class="section-page" id="section-bay-config">
+  <div class="page-title">🔧 工位設定</div>
+  <p class="page-sub">設定各據點引擎科、鈑金科、烤漆科的工位數，用於計算工位承接率</p>
+  <div class="card">
+    <div class="card-title">各廠工位數設定</div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>據點</th>
+            <th style="text-align:center;color:#8b5cf6">🔧 引擎工位</th>
+            <th style="text-align:center;color:#f97316">🔨 鈑金工位</th>
+            <th style="text-align:center;color:#06b6d4">🎨 烤漆工位</th>
+            <th style="text-align:center;color:#10b981">合計</th>
+          </tr>
+        </thead>
+        <tbody id="bayConfigBody"></tbody>
+      </table>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:14px">
+      <div id="bayConfigMsg" style="font-size:13px;flex:1;min-height:20px"></div>
+      <button class="btn btn-primary" onclick="saveBayConfig()">💾 儲存工位設定</button>
+    </div>
+  </div>
+</div>
+   
+   <!-- ── 管理員密碼 ── -->
+    <div class="section-page" id="section-password">
+      <div class="page-title">🔑 管理員密碼</div>
+      <div class="card" style="max-width:460px">
+        <div class="card-title">修改登入密碼</div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+          <div>
+            <label style="display:block;font-size:12px;color:#64748b;margin-bottom:6px">目前密碼</label>
+            <input type="password" id="pwdCurrent" placeholder="輸入目前密碼" style="width:100%;background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:10px 14px;border-radius:8px;font-size:14px">
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:#64748b;margin-bottom:6px">新密碼</label>
+            <input type="password" id="pwdNew" placeholder="輸入新密碼（至少 4 字元）" style="width:100%;background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:10px 14px;border-radius:8px;font-size:14px">
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:#64748b;margin-bottom:6px">確認新密碼</label>
+            <input type="password" id="pwdConfirm" placeholder="再次輸入新密碼" style="width:100%;background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:10px 14px;border-radius:8px;font-size:14px" onkeydown="if(event.key==='Enter') changePassword()">
+          </div>
+          <div id="pwdMsg" style="font-size:13px;min-height:20px"></div>
+          <div><button class="btn btn-primary" onclick="changePassword()" id="pwdBtn">儲存新密碼</button></div>
+        </div>
+      </div>
+    </div>
+   <!-- ── 使用者管理 ── -->
+    <div class="section-page" id="section-users">
+      <div class="page-title">👥 使用者管理</div>
+      <p class="page-sub">新增帳號、設定角色與功能權限</p>
+      <!-- 貼入 settings_users_tab.html 的 tab-users div 內容（去掉最外層的 <div id="tab-users">） -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div class="card-head-title">👥 使用者管理</div>
+          <div id="userRoleNote" style="font-size:12px;color:#64748b;margin-left:4px"></div>
+          <button class="btn btn-primary" onclick="openAddUserModal()" style="margin-left:auto">＋ 新增使用者</button>
+        </div>
+        <div id="usersTableWrap" style="overflow-x:auto">
+          <div style="padding:40px;text-align:center;color:#64748b">載入中...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 操作紀錄 ── -->
+    <div class="section-page" id="section-auditlog">
+      <div class="page-title">📋 操作紀錄</div>
+      <p class="page-sub">查看所有使用者的操作、下載、登入紀錄（含 IP）</p>
+      <!-- 貼入 settings_auditlog_tab.html 的全部內容（去掉最外層 <div id="tab-auditlog">） -->
+      <div id="auditSummaryCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px"></div>
+      <div class="card">
+        <div class="card-head" style="flex-wrap:wrap;gap:8px">
+          <div class="card-head-title">📋 操作紀錄</div>
+          <span id="auditTotalBadge" class="badge badge-blue">0 筆</span>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-left:auto">
+            <input id="auditKeyword" type="text" placeholder="搜尋資源/路徑" style="background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:6px 10px;border-radius:6px;font-size:12px;width:140px;outline:none" onkeydown="if(event.key==='Enter')loadAuditLogs(1)">
+            <input id="auditUsername" type="text" placeholder="帳號/姓名" style="background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:6px 10px;border-radius:6px;font-size:12px;width:110px;outline:none" onkeydown="if(event.key==='Enter')loadAuditLogs(1)">
+            <select id="auditAction" style="background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:6px 10px;border-radius:6px;font-size:12px;outline:none">
+              <option value="">全部動作</option>
+              <option value="LOGIN">LOGIN 登入</option>
+              <option value="LOGOUT">LOGOUT 登出</option>
+              <option value="VIEW">VIEW 查看</option>
+              <option value="UPLOAD">UPLOAD 上傳</option>
+              <option value="DOWNLOAD">DOWNLOAD 下載</option>
+              <option value="CREATE">CREATE 新增</option>
+              <option value="UPDATE">UPDATE 更新</option>
+              <option value="DELETE">DELETE 刪除</option>
+              <option value="SUBMIT">SUBMIT 提交</option>
+              <option value="USER_MGMT">USER_MGMT 帳號管理</option>
+              <option value="PWD_CHANGE">PWD_CHANGE 改密碼</option>
+            </select>
+            <select id="auditBranch" style="background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:6px 10px;border-radius:6px;font-size:12px;outline:none">
+              <option value="">全部廠別</option>
+              <option value="AMA">AMA</option>
+              <option value="AMC">AMC</option>
+              <option value="AMD">AMD</option>
+            </select>
+            <input id="auditDateFrom" type="date" style="background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:6px 10px;border-radius:6px;font-size:12px;outline:none">
+            <input id="auditDateTo" type="date" style="background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:6px 10px;border-radius:6px;font-size:12px;outline:none">
+            <button class="btn btn-primary" onclick="loadAuditLogs(1)" style="font-size:12px;padding:6px 12px">🔍 查詢</button>
+            <button class="btn btn-secondary" onclick="resetAuditFilters()" style="font-size:12px;padding:6px 10px">重置</button>
+            <button class="btn btn-green" onclick="exportAuditCSV()" style="font-size:12px;padding:6px 10px">⬇️ 匯出</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;max-height:calc(100vh - 380px);overflow-y:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:900px">
+            <thead>
+              <tr>
+                <th style="padding:8px 10px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:2">時間</th>
+                <th style="padding:8px 10px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left;position:sticky;top:0;z-index:2">使用者</th>
+                <th style="padding:8px 10px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left;position:sticky;top:0;z-index:2">動作</th>
+                <th style="padding:8px 10px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left;position:sticky;top:0;z-index:2">資源/功能</th>
+                <th style="padding:8px 10px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left;position:sticky;top:0;z-index:2">資料廠別/期間</th>
+                <th style="padding:8px 10px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left;position:sticky;top:0;z-index:2">IP 位址</th>
+                <th style="padding:8px 10px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:center;position:sticky;top:0;z-index:2">狀態</th>
+                <th style="padding:8px 10px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:right;position:sticky;top:0;z-index:2">耗時</th>
+              </tr>
+            </thead>
+            <tbody id="auditTbody">
+              <tr><td colspan="8" style="padding:40px;text-align:center;color:#64748b">請點選查詢載入紀錄</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="auditPagination" style="display:none;padding:10px 14px;border-top:1px solid #2d3f56;display:flex;align-items:center;gap:6px;flex-wrap:wrap"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px" id="auditDetailPanels"></div>
+    </div>
+
+  </div><!-- /.main -->
+</div><!-- /.layout -->
+
+<script>
+// ══ Modal helpers ══
+function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+['saModal','twcModal','perfModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this){if(id==='saModal')cancelEdit();if(id==='twcModal')twcCancelEdit();if(id==='perfModal')perfCancelEdit();}
+  });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  if(document.getElementById('saModal').classList.contains('open'))cancelEdit();
+  if(document.getElementById('twcModal').classList.contains('open'))twcCancelEdit();
+  if(document.getElementById('perfModal').classList.contains('open'))perfCancelEdit();
+});
+
+// ══ Sidebar ══
+const sections=['upload','dbstatus','sa-config','working-days','beauty-op-hours','tech-wage-config','revenue-targets','performance','person-targets','bay-config','password','users','auditlog'];
+function showSection(id){
+  sections.forEach(s=>{
+    document.getElementById(`section-${s}`).classList.toggle('active',s===id);
+    document.getElementById(`menu-${s}`)?.classList.toggle('active',s===id);
+  });
+  document.querySelectorAll('.mob-sec-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.id===`mob-menu-${id}`);
+  });
+  const mobBtn=document.getElementById(`mob-menu-${id}`);
+  if(mobBtn) mobBtn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  if(window.innerWidth<=768) window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='dbstatus')loadCounts();
+  if(id==='sa-config')loadConfigs();
+  if(id==='working-days'){loadWdPeriods();loadWdList();}
+ if(id==='beauty-op-hours') loadBohList();
+  if(id==='tech-wage-config'){loadTwcConfigs();initTwcAccountChips();}
+  if(id==='revenue-targets'){loadRevPeriods();loadRevList();}
+  if(id==='performance'){loadPerfMetrics();loadPerfTgtPeriods();initPerfUpYear();}
+  if(id==='person-targets'){initPtSelectors();}
+  if(id==='bay-config') loadBayConfig();
+  if(id==='users') loadUsers();
+  if(id==='auditlog') { loadAuditLogs(1); loadAuditSummary(); }
+}
+
+// ══ Upload ══
+let selectedFiles=[];
+const zone=document.getElementById('zone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('drag'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag');handleFiles(e.dataTransfer.files);});
+document.getElementById('fileInput').addEventListener('change',e=>handleFiles(e.target.files));
+function handleFiles(files){selectedFiles=Array.from(files).filter(f=>f.name.match(/\.xlsx?$/i));const list=document.getElementById('fileList');if(!selectedFiles.length){list.innerHTML='';return;}list.innerHTML=selectedFiles.map(f=>`<div class="file-item"><span>📄 ${f.name}</span><span style="color:#64748b">${(f.size/1024).toFixed(0)} KB</span></div>`).join('');document.getElementById('btnUpload').disabled=false;}
+async function doUpload(){if(!selectedFiles.length)return;const btn=document.getElementById('btnUpload'),status=document.getElementById('uploadStatus');btn.disabled=true;status.textContent='上傳中...';const formData=new FormData();selectedFiles.forEach(f=>formData.append('files',f));try{const res=await fetch('/api/upload',{method:'POST',body:formData});const data=await res.json();showResults(data.results);selectedFiles=[];document.getElementById('fileList').innerHTML='';loadHistory();}catch(err){status.textContent='上傳失敗: '+err.message;}finally{btn.disabled=false;status.textContent='';}}
+function showResults(results){document.getElementById('resultsCard').style.display='';document.getElementById('results').innerHTML=results.map(r=>`<div class="result-item"><span style="font-weight:600">${r.filename}</span><div style="display:flex;gap:8px;align-items:center">${r.status==='success'?`<span class="badge badge-green">成功</span><span style="color:#64748b;font-size:12px">${r.fileType}/${r.branch||'-'}/${r.period||'-'}/${r.rowCount}筆</span>`:`<span class="badge badge-red">失敗</span><span style="color:#ef4444;font-size:12px">${r.error}</span>`}</div></div>`).join('');}
+async function loadHistory(){try{const data=await(await fetch('/api/history')).json();const tbody=document.getElementById('historyBody');if(!data.length){tbody.innerHTML='<tr><td colspan="7" style="color:#64748b;padding:16px">尚無紀錄</td></tr>';return;}tbody.innerHTML=data.map(h=>`<tr><td style="font-size:12px;color:#64748b;white-space:nowrap">${new Date(h.created_at).toLocaleString('zh-TW')}</td><td style="font-size:12px">${h.file_name}</td><td><span class="badge badge-blue">${h.file_type||'-'}</span></td><td>${h.branch||'-'}</td><td>${h.period||'-'}</td><td class="num">${h.row_count?.toLocaleString()||0}</td><td><span class="badge ${h.status==='success'?'badge-green':'badge-red'}">${h.status==='success'?'成功':'失敗'}</span></td></tr>`).join('');}catch(e){document.getElementById('historyBody').innerHTML=`<tr><td colspan="7" style="color:#ef4444">${e.message}</td></tr>`;}}
+async function loadCounts(){try{const data=await(await fetch('/api/counts')).json();if(data.error)throw new Error(data.error);document.getElementById('counts').innerHTML=data.map(r=>`<div class="count-card"><div class="count-val">${parseInt(r['筆數']).toLocaleString()}</div><div class="count-label">${r['表格']}</div></div>`).join('');}catch(e){document.getElementById('counts').innerHTML=`<span style="color:#ef4444;font-size:13px">❌ ${e.message}</span>`;}}
+
+// ══ SA 銷售設定 ══
+let configs=[],editingConfigId=null,editingFilters=[],lookupTimer=null;
+const PART_TYPES=['一般','票劵','內結','保險','延保','保固','善意維修','VSA'];
+const typeLabel={category_code:'零件類別碼',function_code:'功能碼',part_number:'零件編號',part_type:'付款類別',work_code:'工資代碼'};
+const STAT_METHOD_INFO={amount:{label:'金額',badgeClass:'badge-blue'},quantity:{label:'數量',badgeClass:'badge-green'},count:{label:'筆數',badgeClass:'badge-gray'}};
+const PERSON_TYPE_INFO={sales_person:{label:'👤 銷售人員',badgeStyle:'background:rgba(59,130,246,.15);color:#60a5fa'},pickup_person:{label:'🔧 技師施工',badgeStyle:'background:rgba(245,158,11,.15);color:#f59e0b'}};
+function selectStatMethod(val){document.querySelectorAll('input[name="stat_method"]').forEach(el=>el.checked=el.value===val);['amount','quantity','count'].forEach(v=>document.getElementById(`smLabel-${v}`)?.classList.toggle('selected',v===val));}
+function getStatMethod(){return document.querySelector('input[name="stat_method"]:checked')?.value||'amount';}
+function setStatMethod(val){selectStatMethod(val||'amount');}
+function togglePersonType(val){const cb=document.querySelector(`input[name="person_type"][value="${val}"]`);const label=document.getElementById(`ptLabel-${val}`);if(!cb||!label)return;const checkedCount=document.querySelectorAll('input[name="person_type"]:checked').length;if(cb.checked&&checkedCount<=1)return;cb.checked=!cb.checked;label.classList.toggle('selected',cb.checked);}
+function getPersonType(){const vals=[...document.querySelectorAll('input[name="person_type"]:checked')].map(el=>el.value);if(vals.includes('sales_person')&&vals.includes('pickup_person'))return'both';return vals[0]||'sales_person';}
+function setPersonType(val){const isSales=val==='sales_person'||val==='both';const isTech=val==='pickup_person'||val==='both';['sales_person','pickup_person'].forEach(v=>{const cb=document.querySelector(`input[name="person_type"][value="${v}"]`);const label=document.getElementById(`ptLabel-${v}`);if(!cb||!label)return;const on=v==='sales_person'?isSales:isTech;cb.checked=on;label.classList.toggle('selected',on);});}
+async function loadConfigs(){try{configs=await(await fetch('/api/sa-config')).json();renderConfigList();}catch(e){document.getElementById('configList').innerHTML=`<div style="color:#ef4444">${e.message}</div>`;}}
+function renderConfigList(){const el=document.getElementById('configList');if(!configs.length){el.innerHTML=`<div class="empty-state"><div class="big">📋</div><div>尚無設定，點擊「新增設定」開始建立追蹤項目</div></div>`;return;}el.innerHTML=configs.map(c=>{const sm=STAT_METHOD_INFO[c.stat_method]||STAT_METHOD_INFO.amount;const pt=PERSON_TYPE_INFO[c.person_type||'sales_person']||PERSON_TYPE_INFO.sales_person;return`<div class="config-item"><div class="config-item-info"><div class="config-item-name">${c.config_name}</div>${c.description?`<div class="config-item-desc">${c.description}</div>`:''}<div class="config-item-tags"><span class="badge ${sm.badgeClass}" style="font-size:11px">統計：${sm.label}</span><span class="badge" style="font-size:11px;${pt.badgeStyle}">${pt.label}</span>${(c.filters||[]).map(f=>`<span class="badge" style="font-size:11px;${typeBadgeStyle(f.type)}">${typeLabel[f.type]||f.type}: ${f.value}</span>`).join('')}</div></div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-secondary btn-sm" onclick="startEditConfig(${c.id})">編輯</button><button class="btn btn-danger btn-sm" onclick="deleteConfig(${c.id},'${c.config_name.replace(/'/g,"\\'")}')">刪除</button></div></div>`;}).join('');}
+function typeBadgeStyle(type){const map={category_code:'background:rgba(59,130,246,.15);color:#60a5fa',function_code:'background:rgba(139,92,246,.15);color:#a78bfa',part_number:'background:rgba(16,185,129,.15);color:#34d399',part_type:'background:rgba(249,115,22,.15);color:#fb923c',work_code:'background:rgba(20,184,166,.15);color:#2dd4bf'};return map[type]||'background:rgba(100,116,139,.15);color:#94a3b8';}
+function startNewConfig(){editingConfigId=null;editingFilters=[];document.getElementById('editorTitle').textContent='新增設定';document.getElementById('cfgName').value='';document.getElementById('cfgDesc').value='';setStatMethod('amount');setPersonType('sales_person');renderFilterList();resetAddRow();openModal('saModal');setTimeout(()=>document.getElementById('cfgName').focus(),100);}
+function startEditConfig(id){const cfg=configs.find(c=>c.id===id);editingConfigId=id;editingFilters=(cfg.filters||[]).map(f=>({...f}));document.getElementById('editorTitle').textContent=`編輯設定 — ${cfg.config_name}`;document.getElementById('cfgName').value=cfg.config_name;document.getElementById('cfgDesc').value=cfg.description||'';setStatMethod(cfg.stat_method||'amount');setPersonType(cfg.person_type||'sales_person');renderFilterList();resetAddRow();openModal('saModal');}
+function cancelEdit(){closeModal('saModal');editingFilters=[];}
+async function deleteConfig(id,name){if(!confirm(`確定要刪除「${name}」嗎？`))return;await fetch(`/api/sa-config/${id}`,{method:'DELETE'});await loadConfigs();}
+async function saveConfig(){const config_name=document.getElementById('cfgName').value.trim(),description=document.getElementById('cfgDesc').value.trim(),stat_method=getStatMethod(),person_type=getPersonType();if(!config_name){alert('請輸入設定名稱');return;}if(!editingFilters.length){alert('請至少新增一個篩選條件');return;}const filters=editingFilters.map(({type,value})=>({type,value}));const btn=document.getElementById('btnSaveCfg');btn.disabled=true;try{const url=editingConfigId?`/api/sa-config/${editingConfigId}`:'/api/sa-config';const method=editingConfigId?'PUT':'POST';const data=await(await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify({config_name,description,filters,stat_method,person_type})})).json();if(data.error)throw new Error(data.error);cancelEdit();await loadConfigs();}catch(e){alert('儲存失敗：'+e.message);}finally{btn.disabled=false;}}
+function renderFilterList(){const el=document.getElementById('filterList');if(!editingFilters.length){el.innerHTML='<div style="color:#64748b;font-size:12px;padding:4px 0 8px">尚未新增篩選條件</div>';return;}el.innerHTML=editingFilters.map((f,i)=>`<div class="filter-tag-row"><span class="type-badge type-${f.type}">${typeLabel[f.type]||f.type}</span><span style="font-size:13px;font-weight:600;flex:1">${f.value}</span><button class="remove-btn" onclick="removeFilter(${i})" title="移除">×</button></div>`).join('');}
+function removeFilter(i){editingFilters.splice(i,1);renderFilterList();if(document.getElementById('addType').value==='part_type')renderPartTypeCheckboxes();}
+function addFilter(){const type=document.getElementById('addType').value,value=document.getElementById('addValue').value.trim(),hint=document.getElementById('addHint');if(!value){hint.textContent='請輸入值';return;}if(editingFilters.some(f=>f.type===type&&f.value===value)){hint.textContent='此條件已存在';return;}editingFilters.push({type,value});renderFilterList();document.getElementById('addValue').value='';hint.textContent='';clearLookup();}
+function renderPartTypeCheckboxes(){const existing=editingFilters.filter(f=>f.type==='part_type').map(f=>f.value);document.getElementById('partTypeCheckboxes').innerHTML=PART_TYPES.map(pt=>{const already=existing.includes(pt);return`<label class="part-type-chip ${already?'disabled':''}" onclick="togglePartTypeChip(this,'${pt}')"><input type="checkbox" value="${pt}" ${already?'disabled':''}>${pt}${already?' ✓':''}</label>`;}).join('');}
+function togglePartTypeChip(el,val){if(el.classList.contains('disabled'))return;const cb=el.querySelector('input');cb.checked=!cb.checked;el.classList.toggle('checked',cb.checked);}
+function addPartTypeFilters(){const hint=document.getElementById('addHint'),checked=[...document.querySelectorAll('#partTypeCheckboxes input:checked')];if(!checked.length){hint.textContent='請至少勾選一個付款類別';return;}let added=0;checked.forEach(cb=>{if(!editingFilters.some(f=>f.type==='part_type'&&f.value===cb.value)){editingFilters.push({type:'part_type',value:cb.value});added++;}});renderFilterList();renderPartTypeCheckboxes();hint.textContent=added?`已加入 ${added} 個付款類別`:'所選項目已全部存在';}
+function onTypeChange(){const type=document.getElementById('addType').value,isP=type==='part_type',isW=type==='work_code';document.getElementById('lookupWrap').style.display=(isP||isW)?'none':'';document.getElementById('btnAddFilter').style.display=(isP||isW)?'none':'';document.getElementById('partTypePanel').style.display=isP?'':'none';document.getElementById('workCodePanel').style.display=isW?'':'none';document.getElementById('addHint').textContent='';if(isP)renderPartTypeCheckboxes();else clearLookup();}
+function addWorkCodeFilter(){const raw=document.getElementById('workCodeInput').value.trim(),hint=document.getElementById('addHint');if(!raw){hint.textContent='請輸入工資代碼';return;}if(editingFilters.some(f=>f.type==='work_code'&&f.value===raw)){hint.textContent='此代碼已存在';return;}editingFilters.push({type:'work_code',value:raw});renderFilterList();document.getElementById('workCodeInput').value='';hint.textContent='';}
+function resetAddRow(){document.getElementById('addType').value='category_code';document.getElementById('addValue').value='';document.getElementById('lookupDropdown').style.display='none';document.getElementById('addHint').textContent='';document.getElementById('lookupWrap').style.display='';document.getElementById('btnAddFilter').style.display='';document.getElementById('partTypePanel').style.display='none';document.getElementById('workCodePanel').style.display='none';}
+function clearLookup(){document.getElementById('addValue').value='';document.getElementById('lookupDropdown').style.display='none';document.getElementById('addHint').textContent='';}
+function debounceLookup(){clearTimeout(lookupTimer);lookupTimer=setTimeout(doLookup,280);}
+async function doLookup(){const type=document.getElementById('addType').value;if(type==='part_type'||type==='work_code')return;const q=document.getElementById('addValue').value.trim(),dd=document.getElementById('lookupDropdown');if(!q){dd.style.display='none';return;}try{const data=await(await fetch(`/api/sa-config/parts-lookup?type=${type}&q=${encodeURIComponent(q)}`)).json();if(!data.length){dd.style.display='none';return;}dd.innerHTML=data.map(item=>type==='part_number'?`<div class="lookup-item" onclick="pickLookup('${esc(item.value)}')"><div class="lookup-item-val">${item.value}</div><div class="lookup-item-sub">${item.label||''} 類別:${item.category_code||'-'} 功能:${item.function_code||'-'}</div></div>`:`<div class="lookup-item" onclick="pickLookup('${esc(item.value)}')"><div class="lookup-item-val">${item.value}</div><div class="lookup-item-sub">涵蓋 ${item.part_count} 種零件 — ${(item.sample_names||'').slice(0,60)}</div></div>`).join('');dd.style.display='block';}catch(e){dd.style.display='none';}}
+function pickLookup(value){document.getElementById('addValue').value=value;document.getElementById('lookupDropdown').style.display='none';}
+const esc=s=>s.replace(/'/g,"\\'");
+
+ // ══ 美容工時代碼 ══
+const DEFAULT_BOH_LIST = [
+  ['00030','免費洗車, 40車系, S/V60',0.6],['00031','免費洗車, XC60/ 90車系',0.6],
+  ['00032','精緻清潔_40車系, S/V60',0.6],['00033','精緻清潔_XC60/ 90車系',0.6],
+  ['00034','精緻美容蠟護理_40車系, S/V60',2.0],['00035','精緻美容蠟護理_XC60/ 90車系',1.5],
+  ['00036','精緻棕櫚蠟護理_40車系, S/V60',3.0],['00037','精緻棕櫚蠟護理_XC60/ 90車系',3.0],
+  ['00038','極致鏡面封體護膜, 40車系, S/V60',5.0],['00039','極致鏡面封體護膜, XC60/ 90車系',5.0],
+  ['00040','極致碳盾鍍膜, 40車系, S/V60車系',8.0],['00041','極致碳盾鍍膜, XC60/ 90車系',8.0],
+  ['00042','新車基礎美容蠟_40車系, S/V60',2.5],['00043','新車漆面處理(基礎)_40車系, S/V60',2.5],
+  ['00044','新車漆面處理(進階)_40車系, S/V60',2.5],['00045','新車基礎美容蠟_XC60/ 90車系',2.5],
+  ['00046','新車交車前護理_B, XC系列/S90',2.5],['00047','新車漆面處理(進階)_XC60/ 90車系',2.5],
+  ['00048','前檔玻璃鍍膜',0.6],['00049','全車玻璃鍍膜(含一般天窗)',2.0],
+  ['00050','全車玻璃鍍膜(含全景天窗)',2.0],['00051','深層清潔_40車系，S/V60',1.0],
+  ['00052','深層清潔_XC60，90車系',1.0],['00053','內裝皮革飾板護理',1.0],
+  ['00054','頭燈修護鍍膜(單邊)',0.6],['00055','頭燈修護鍍膜(雙邊)',1.0],
+  ['00056','單顆輪圈鍍膜_外層',0.6],['00057','單顆輪圈鍍膜_內層+外層',0.6],
+  ['00058','全車輪圈鍍膜_外層',1.0],['00059','全車輪圈鍍膜_內層+外層',2.0],
+  ['00060','鍍膜維護',1.0],['00061','精緻美容蠟加購內裝護理',2.5],
+  ['00062','鍍膜維護加購內裝護理',1.3],['00063','基礎防護碳盾鍍膜_40 series/ S60/ V60',6.6],
+  ['00064','基礎瓷晶盾鍍膜_XC60 series/ 90 series',6.6],['00065','前擋玻璃除油膜',0.5],
+  ['00066','全車玻璃除油膜',1.5],['00067','瓷晶盾鍍膜_40 Series/ SV60',8.0],
+  ['00068','瓷晶盾鍍膜_大車',8.0],['00069','內裝鍍膜_40 Series/ SV60',1.0],
+  ['00070','內裝鍍膜_XC60/ 90 Series',1.0],['00093','鈑烤車護理',1.5],
+  ['00101','精緻清潔_XC60/ 90車系',0.6],['00102','精緻美容蠟護理_40車系, S/V60',1.5],
+  ['00103','精緻美容蠟護理_XC60/ 90車系',1.5],['00104','精緻棕櫚蠟護理_40車系, S/V60',2.0],
+  ['00105','精緻棕櫚蠟護理_XC60/ 90車系',2.0],['00106','極致鏡面拋光封體護膜_40車系, S/V60',5.0],
+  ['00107','極致鏡面拋光封體護膜_XC60/ 90車系',5.0],['00108','前檔玻璃鍍膜',0.6],
+  ['00109','全車玻璃鍍膜(含一般天窗)',2.0],['00110','全車玻璃鍍膜(含全景天窗)',2.0],
+  ['00111','內裝皮革飾板護理',1.0],['00112','頭燈修護鍍膜(單邊)',0.6],
+  ['00113','頭燈修護鍍膜(雙邊)',0.6],['00114','單顆輪圈鍍膜_外層',0.6],
+  ['00115','單顆輪圈鍍膜_內層+外層',0.6],['00116','全車輪圈鍍膜_外層',1.0],
+  ['00117','全車輪圈鍍膜_內層+外層',2.0],['00118','鍍膜維護(18個月+免費3次維護)',1.0],
+  ['00119','精緻美容蠟加購內裝護理 $1000',2.5],['00120','鍍膜維護加購內裝護理 $1000',1.3],
+  ['00121','前擋玻璃除油膜(勿用)',0.5],['00122','全車玻璃除油膜',1.5],
+  ['00123','瓷晶盾鍍膜_小車',8.0],['00124','瓷晶盾鍍膜_大車',8.0],
+  ['00126','內裝鍍膜_XC60/ 90 Series',1.0],['00207','前擋玻璃除油膜(勿用)',0.5],
+  ['00247','基礎碳盾鍍膜(CARE)',6.6],['00251','基礎防護碳盾鍍膜',6.6],
+  ['00252','鈑烤車護理',1.5],['00277','精緻清潔_',0.6],['00278','精緻美容蠟護理_',2.0],
+  ['00327','鈑烤車護理',1.5],['00328','鈑烤車護理',1.5],
+  ['00700','新車基礎美容蠟_40車系, S/V60',2.5],['00702','新車漆面處理(基礎)_XC60/ 90車系',2.5],
+  ['00704','基礎防護碳盾鍍膜_XC60 series/ 90 series',6.6],
+];
+
+async function loadBohList() {
+  const el = document.getElementById('beautyOpHoursList');
+  if (!el) return;
+  try {
+    const rows = await (await fetch('/api/beauty-op-hours')).json();
+    if (!rows.length) {
+      el.innerHTML = '<div style="color:#64748b;font-size:13px;padding:12px 0">尚未設定任何代碼，可點「匯入預設清單」快速建立</div>';
+      return;
+    }
+    let tbl = `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr>
+        <th style="text-align:left;padding:7px 10px;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;white-space:nowrap">工資代碼</th>
+        <th style="text-align:left;padding:7px 10px;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56">作業內容</th>
+        <th style="text-align:right;padding:7px 10px;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;white-space:nowrap">標準工時(H)</th>
+        <th style="padding:7px 10px;border-bottom:1px solid #2d3f56"></th>
+      </tr></thead><tbody>`;
+    rows.forEach(r => {
+      tbl += `<tr style="border-bottom:1px solid rgba(45,63,86,.3)">
+        <td style="padding:7px 10px;font-family:monospace;color:#3b82f6">${r.op_code}</td>
+        <td style="padding:7px 10px;color:#cbd5e1">${r.description || '—'}</td>
+        <td style="padding:7px 10px;text-align:right;color:#10b981;font-weight:700">${parseFloat(r.standard_hours).toFixed(1)}</td>
+        <td style="padding:7px 6px;text-align:right;white-space:nowrap">
+          <button class="btn btn-secondary btn-sm" onclick="editBoh('${r.op_code}','${(r.description||'').replace(/'/g,"\\'")}','${r.standard_hours}')">編輯</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteBoh('${r.op_code}')">刪除</button>
+        </td>
+      </tr>`;
+    });
+    tbl += `</tbody></table></div><div style="font-size:11px;color:#475569;margin-top:8px">共 ${rows.length} 筆</div>`;
+    el.innerHTML = tbl;
+  } catch(e) { el.innerHTML = `<div style="color:#ef4444;font-size:13px">${e.message}</div>`; }
+}
+
+function editBoh(op_code, description, hours) {
+  document.getElementById('bohOpCode').value = op_code;
+  document.getElementById('bohDesc').value = description;
+  document.getElementById('bohHours').value = hours;
+  document.getElementById('bohOpCode').focus();
+}
+
+function clearBohForm() {
+  document.getElementById('bohOpCode').value = '';
+  document.getElementById('bohDesc').value = '';
+  document.getElementById('bohHours').value = '';
+  document.getElementById('bohMsg').textContent = '';
+}
+
+async function saveBoh() {
+  const op_code = document.getElementById('bohOpCode').value.trim();
+  const description = document.getElementById('bohDesc').value.trim();
+  const standard_hours = document.getElementById('bohHours').value.trim();
+  const msg = document.getElementById('bohMsg');
+  if (!op_code) { msg.style.color='#ef4444'; msg.textContent='請填入工資代碼'; return; }
+  if (!standard_hours || isNaN(parseFloat(standard_hours))) { msg.style.color='#ef4444'; msg.textContent='請填入有效工時'; return; }
+  try {
+    const r = await fetch(`/api/beauty-op-hours/${encodeURIComponent(op_code)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ description, standard_hours: parseFloat(standard_hours) })
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+    msg.style.color='#10b981'; msg.textContent=`✅ ${op_code} 已儲存`;
+    clearBohForm();
+    loadBohList();
+  } catch(e) { msg.style.color='#ef4444'; msg.textContent=e.message; }
+}
+
+async function deleteBoh(op_code) {
+  if (!confirm(`確定刪除 ${op_code}？\n刪除後該代碼工時將 fallback 至 DMS 原始標準工時。`)) return;
+  try {
+    await fetch(`/api/beauty-op-hours/${encodeURIComponent(op_code)}`, { method: 'DELETE' });
+    loadBohList();
+  } catch(e) { alert(e.message); }
+}
+
+async function importDefaultBoh() {
+  if (!confirm(`確定匯入 ${DEFAULT_BOH_LIST.length} 筆預設美容工時代碼？\n已存在的代碼將被覆蓋。`)) return;
+  const el = document.getElementById('beautyOpHoursList');
+  el.innerHTML = '<div style="color:#64748b;font-size:13px"><span class="spinner"></span>匯入中...</div>';
+  let ok = 0, fail = 0;
+  for (const [op_code, description, standard_hours] of DEFAULT_BOH_LIST) {
+    try {
+      const r = await fetch(`/api/beauty-op-hours/${encodeURIComponent(op_code)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description, standard_hours })
+      });
+      const d = await r.json();
+      if (d.ok) ok++; else fail++;
+    } catch(e) { fail++; }
+  }
+  loadBohList();
+  const msg = document.getElementById('bohMsg');
+  msg.style.color = fail ? '#f59e0b' : '#10b981';
+  msg.textContent = `匯入完成：成功 ${ok} 筆${fail ? '，失敗 '+fail+' 筆' : ''}`;
+}
+
+// ══ 工作天數設定 ══
+let _wdMode='service'; // 'service' | 'employee'
+let wdWorkDates=new Set();
+async function loadWdPeriods(){try{const periods=await(await fetch('/api/periods')).json();const sel=document.getElementById('wdPeriod');sel.innerHTML='<option value="">選擇期間...</option>';periods.forEach(p=>{const opt=document.createElement('option');opt.value=p;opt.textContent=`${p.slice(0,4)}年${p.slice(4)}月`;sel.appendChild(opt);});const _cp=`${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}`;sel.value=periods.includes(_cp)?_cp:(periods.length?periods[0]:'');}catch(e){}}
+// ── 員工工作天快速編輯 / 刪除 ──
+function quickEditWdEmployee(period) {
+  switchWdMode('employee');
+  document.getElementById('wdPeriod').value = period;
+  loadWdCalendar();
+  const mainEl = document.querySelector('.main');
+  if (mainEl) mainEl.scrollTop = 0;
+  if (window.innerWidth <= 768) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+async function quickDeleteWdEmployee(period) {
+  const label = period.slice(0,4) + '年' + parseInt(period.slice(4)) + '月';
+  if (!confirm(`確定刪除員工工作天 ${label} 的設定？\n刪除後技師工時目標將改用服務廠工作天計算。`)) return;
+  await fetch(`/api/working-days?branch=EMPLOYEE&period=${period}`, { method: 'DELETE' });
+  loadWdList();
+}
+
+// ── WD 模式切換 ──
+function switchWdMode(mode) {
+  _wdMode = mode;
+  const isEmp = mode === 'employee';
+
+  const btnS = document.getElementById('wdModeBtn-service');
+  const btnE = document.getElementById('wdModeBtn-employee');
+  if (btnS) {
+    btnS.style.borderColor = isEmp ? '#2d3f56' : '#3b82f6';
+    btnS.style.background  = isEmp ? 'transparent' : 'rgba(59,130,246,.15)';
+    btnS.style.color       = isEmp ? '#64748b' : '#3b82f6';
+  }
+  if (btnE) {
+    btnE.style.borderColor = isEmp ? '#10b981' : '#2d3f56';
+    btnE.style.background  = isEmp ? 'rgba(16,185,129,.15)' : 'transparent';
+    btnE.style.color       = isEmp ? '#10b981' : '#64748b';
+  }
+
+  const noteEl = document.getElementById('wdEmployeeNote');
+  const brWrap = document.getElementById('wdBranchWrap');
+  if (noteEl) noteEl.style.display = isEmp ? '' : 'none';
+  if (brWrap) brWrap.style.display = isEmp ? 'none' : 'inline-flex';
+
+  const calWrap = document.getElementById('wdCalendarWrap');
+  if (calWrap) calWrap.style.display = 'none';
+  document.getElementById('btnWdDelete').style.display = 'none';
+  document.getElementById('wdConfigStatus').textContent =
+    isEmp ? '👷 員工工作天（三站共用，預設週一至週五）' : '';
+  wdWorkDates = new Set();
+}
+async function loadWdList() {
+  const el = document.getElementById('wdExistingList');
+  try {
+    const rows = await (await fetch('/api/working-days')).json();
+    if (!rows.length) {
+      el.innerHTML = '<div style="color:#64748b;font-size:13px;padding:12px 0">尚未設定任何月份，系統將使用自動偵測工作天數</div>';
+      return;
+    }
+
+    // 分離員工工作天 vs 服務廠工作天
+    const empRows = rows.filter(r => r.branch === 'EMPLOYEE');
+    const svcRows = rows.filter(r => r.branch !== 'EMPLOYEE');
+    const empByPeriod = {};
+    empRows.forEach(r => { empByPeriod[r.period] = r; });
+    const byPeriod = {};
+    svcRows.forEach(r => { if (!byPeriod[r.period]) byPeriod[r.period] = {}; byPeriod[r.period][r.branch] = r; });
+
+    const empPeriods = Object.keys(empByPeriod).sort().reverse();
+    const svcPeriods = Object.keys(byPeriod).sort().reverse();
+    const BRANCHES   = ['AMA','AMC','AMD'];
+
+    let html = '<div class="wd-existing-list">';
+
+    // ── 員工工作天區塊 ──
+    if (empPeriods.length) {
+      html += `<div style="font-size:11px;font-weight:700;color:#10b981;letter-spacing:.05em;padding:6px 0 4px;border-bottom:1px solid rgba(16,185,129,.25);margin-bottom:8px">👷 員工工作天數（技師工時目標用）</div>`;
+      empPeriods.forEach(period => {
+        const r = empByPeriod[period];
+        const days = r.work_dates?.length || 0;
+        const label = `${period.slice(0,4)}年${parseInt(period.slice(4))}月`;
+        html += `<div class="wd-existing-item">
+          <div class="info">
+            <div class="name"><span class="badge" style="background:rgba(16,185,129,.15);color:#10b981">👷 員工</span>&nbsp;${label}</div>
+            <div class="sub">${days} 個工作天（三站共用）${r.note ? ' · ' + r.note : ''}</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="quickEditWdEmployee('${period}')">編輯</button>
+          <button class="btn btn-danger btn-sm" onclick="quickDeleteWdEmployee('${period}')">刪除</button>
+        </div>`;
+      });
+      if (svcPeriods.length) html += '<div style="margin-bottom:10px"></div>';
+    }
+
+    // ── 服務廠工作天區塊 ──
+    if (svcPeriods.length) {
+      if (empPeriods.length) {
+        html += `<div style="font-size:11px;font-weight:700;color:#3b82f6;letter-spacing:.05em;padding:6px 0 4px;border-bottom:1px solid rgba(59,130,246,.2);margin-bottom:8px">🏭 服務廠工作天數（每日台數 / 進度用）</div>`;
+      }
+      svcPeriods.forEach(period => {
+        const pRows    = byPeriod[period];
+        const label    = `${period.slice(0,4)}年${parseInt(period.slice(4))}月`;
+        const allPresent = BRANCHES.every(b => pRows[b]);
+        const dayCounts  = BRANCHES.map(b => pRows[b]?.work_dates?.length || 0);
+        const allSame    = allPresent && dayCounts.every(c => c === dayCounts[0]);
+        if (allSame) {
+          html += `<div class="wd-existing-item"><div class="info"><div class="name"><span class="badge" style="background:rgba(16,185,129,.15);color:#10b981">三站同步</span>&nbsp;${label}</div><div class="sub">AMA / AMC / AMD 均為 ${dayCounts[0]} 個營業日</div></div><button class="btn btn-secondary btn-sm" onclick="quickEditWd('ALL','${period}')">編輯（同步）</button><button class="btn btn-danger btn-sm" onclick="quickDeleteWd('ALL','${period}')">刪除三站</button></div>`;
+        } else {
+          BRANCHES.filter(b => pRows[b]).forEach(b => {
+            const r = pRows[b]; const days = r.work_dates?.length || 0;
+            html += `<div class="wd-existing-item"><div class="info"><div class="name"><span class="badge badge-blue">${b}</span>&nbsp;${label}</div><div class="sub">${days} 個營業日${r.note ? ' · ' + r.note : ''}</div></div><button class="btn btn-secondary btn-sm" onclick="quickEditWd('${b}','${period}')">編輯</button><button class="btn btn-danger btn-sm" onclick="quickDeleteWd('${b}','${period}')">刪除</button></div>`;
+          });
+        }
+      });
+    }
+
+    if (!empPeriods.length && !svcPeriods.length) {
+      html += '<div style="color:#64748b;font-size:13px;padding:12px 0">尚未設定任何月份</div>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+  } catch(e) { el.innerHTML = `<div style="color:#ef4444;font-size:13px">${e.message}</div>`; }
+}function quickEditWd(branch,period){document.getElementById('wdBranch').value=branch;document.getElementById('wdPeriod').value=period;loadWdCalendar();const mainEl=document.querySelector('.main');if(mainEl) mainEl.scrollTop=0;if(window.innerWidth<=768) window.scrollTo({top:0,behavior:'smooth'});}
+async function quickDeleteWd(branch,period){const targets=branch==='ALL'?['AMA','AMC','AMD']:[branch];const label=branch==='ALL'?'三站':branch;if(!confirm(`確定刪除 ${label} ${period.slice(0,4)}年${period.slice(4)}月 的工作天數設定嗎？\n刪除後將回到自動偵測。`))return;await Promise.all(targets.map(br=>fetch(`/api/working-days?branch=${br}&period=${period}`,{method:'DELETE'})));loadWdList();}
+function onWdBranchChange(){const isAll=document.getElementById('wdBranch').value==='ALL';document.getElementById('wdCalendarWrap').style.display='none';document.getElementById('btnWdDelete').style.display='none';document.getElementById('wdConfigStatus').textContent=isAll?'設定後將同步寫入 AMA、AMC、AMD':'';}
+
+async function loadWdCalendar() {
+  const period   = document.getElementById('wdPeriod').value;
+  const statusEl = document.getElementById('wdConfigStatus');
+  if (!period) { statusEl.textContent = '請選擇期間'; return; }
+  const year  = parseInt(period.slice(0,4));
+  const month = parseInt(period.slice(4)) - 1;
+
+  if (_wdMode === 'employee') {
+    try {
+      const data = await (await fetch(`/api/working-days?branch=EMPLOYEE&period=${period}`)).json();
+      wdWorkDates = new Set(Array.isArray(data.work_dates) ? data.work_dates : []);
+      const isNew = !data.updated_at || !data.work_dates?.length;
+      if (isNew) {
+        wdWorkDates = new Set();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let d = 1; d <= daysInMonth; d++) {
+          const ds  = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          const dow = new Date(ds + 'T00:00:00').getDay();
+          if (dow >= 1 && dow <= 5) wdWorkDates.add(ds);
+        }
+        statusEl.textContent = '⚠️ 尚未設定，已自動選取週一至週五，請確認後儲存';
+      } else {
+        statusEl.textContent = `✅ 已設定 ${wdWorkDates.size} 天（員工工作天）`;
+      }
+      document.getElementById('btnWdDelete').style.display = data.updated_at ? '' : 'none';
+    } catch(e) { wdWorkDates = new Set(); }
+    document.getElementById('wdMonthTitle').textContent = `${year}年${month+1}月 ─ 👷 員工工作天（三站共用）`;
+    document.getElementById('wdCalendarWrap').style.display = '';
+    renderWdCalendar(year, month);
+    return;
+  }
+
+  // 服務廠模式
+  const branch      = document.getElementById('wdBranch').value;
+  const fetchBranch = branch === 'ALL' ? 'AMA' : branch;
+  try {
+    const data = await (await fetch(`/api/working-days?branch=${fetchBranch}&period=${period}`)).json();
+    wdWorkDates = new Set(Array.isArray(data.work_dates) ? data.work_dates : []);
+    if (!data.updated_at || !data.work_dates?.length) {
+      statusEl.textContent = branch === 'ALL' ? '⚠️ 尚未設定，請勾選後儲存（將同步三站）' : `⚠️ ${branch} 尚未設定`;
+      document.getElementById('btnWdDelete').style.display = 'none';
+    } else {
+      statusEl.textContent = `✅ ${branch === 'ALL' ? 'AMA（代表三站）' : branch} 已設定 ${wdWorkDates.size} 個營業日`;
+      document.getElementById('btnWdDelete').style.display = '';
+    }
+  } catch(e) { wdWorkDates = new Set(); statusEl.textContent = '載入失敗'; }
+  document.getElementById('wdMonthTitle').textContent = `${year}年${month+1}月 ─ ${branch === 'ALL' ? '三站同步' : branch}`;
+  document.getElementById('wdCalendarWrap').style.display = '';
+  renderWdCalendar(year, month);
+}
+
+function renderWdCalendar(year,month){const cal=document.getElementById('wdCalendar');const firstDay=new Date(year,month,1).getDay(),daysInMonth=new Date(year,month+1,0).getDate();let html='';for(let i=0;i<firstDay;i++)html+=`<div class="wd-day-cell empty"></div>`;for(let d=1;d<=daysInMonth;d++){const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,dow=(firstDay+d-1)%7,isWork=wdWorkDates.has(dateStr),cls=['wd-day-cell',isWork?'work':'',dow===0?'sun-col':'',dow===6?'sat-col':''].filter(Boolean).join(' ');html+=`<div class="${cls}" data-date="${dateStr}" onclick="toggleWdDay('${dateStr}')">${d}</div>`;}cal.innerHTML=html;updateWdCount();}
+function toggleWdDay(dateStr){if(wdWorkDates.has(dateStr))wdWorkDates.delete(dateStr);else wdWorkDates.add(dateStr);const cell=document.querySelector(`.wd-day-cell[data-date="${dateStr}"]`);if(cell)cell.classList.toggle('work',wdWorkDates.has(dateStr));updateWdCount();}
+function updateWdCount(){document.getElementById('wdWorkCount').textContent=wdWorkDates.size;}
+function wdSelectWeekdays(){document.querySelectorAll('.wd-day-cell:not(.empty)').forEach(cell=>{const dow=new Date(cell.dataset.date).getDay();if(dow>=1&&dow<=5){wdWorkDates.add(cell.dataset.date);cell.classList.add('work');}else{wdWorkDates.delete(cell.dataset.date);cell.classList.remove('work');}});updateWdCount();}
+function wdSelectAll(){document.querySelectorAll('.wd-day-cell:not(.empty)').forEach(cell=>{wdWorkDates.add(cell.dataset.date);cell.classList.add('work');});updateWdCount();}
+function wdClearAll(){wdWorkDates.clear();document.querySelectorAll('.wd-day-cell:not(.empty)').forEach(cell=>cell.classList.remove('work'));updateWdCount();}
+async function saveWdConfig(){const period=document.getElementById('wdPeriod').value,msgEl=document.getElementById('wdMsg'),btn=document.getElementById('btnWdSave');if(!period){msgEl.textContent='請先選擇期間';msgEl.style.color='#ef4444';return;}btn.disabled=true;const work_dates=[...wdWorkDates].sort();const branch=_wdMode==='employee'?'EMPLOYEE':document.getElementById('wdBranch').value;const targets=_wdMode==='employee'?['EMPLOYEE']:branch==='ALL'?['AMA','AMC','AMD']:[branch];msgEl.textContent='儲存中...';msgEl.style.color='#64748b';try{await Promise.all(targets.map(br=>fetch('/api/working-days',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({branch:br,period,work_dates})}).then(r=>r.json()).then(d=>{if(d.error)throw new Error(`${br}: ${d.error}`);})));const label=_wdMode==='employee'?'員工工作天（三站共用）':branch==='ALL'?'AMA、AMC、AMD 三站':branch;msgEl.textContent=`✅ 已儲存 ${label} 共 ${work_dates.length} 個營業日`;msgEl.style.color='#10b981';if(branch!=='ALL'||_wdMode==='employee')document.getElementById('btnWdDelete').style.display='';loadWdList();}catch(e){msgEl.textContent='❌ '+e.message;msgEl.style.color='#ef4444';}finally{btn.disabled=false;}}
+async function deleteWdConfig(){const period=document.getElementById('wdPeriod').value;const branch=_wdMode==='employee'?'EMPLOYEE':document.getElementById('wdBranch').value;const targets=_wdMode==='employee'?['EMPLOYEE']:branch==='ALL'?['AMA','AMC','AMD']:[branch];const label=_wdMode==='employee'?'員工工作天':branch==='ALL'?'AMA、AMC、AMD 三站':branch;if(!confirm(`確定刪除 ${label} ${period.slice(0,4)}年${period.slice(4)}月 的工作天數設定？`))return;await Promise.all(targets.map(br=>fetch(`/api/working-days?branch=${br}&period=${period}`,{method:'DELETE'})));wdClearAll();loadWdList();}
+
+// ══ 工資代碼設定 ══
+const TWC_ALL_ACCOUNT=['一般','票劵','內結','保險','延保','保固','善意維修','VSA'];
+let twcConfigs=[],twcEditingId=null,twcCodes=[];
+function initTwcAccountChips(){const el=document.getElementById('twcAccountChips');if(!el||el.children.length)return;_buildChips('twcAccountChips',TWC_ALL_ACCOUNT,[]);}
+function selectTwcMethod(val){document.querySelectorAll('input[name="twc_method"]').forEach(el=>el.checked=el.value===val);['count','amount','hours'].forEach(v=>document.getElementById(`twcSmLabel-${v}`)?.classList.toggle('selected',v===val));}
+function getTwcMethod(){return document.querySelector('input[name="twc_method"]:checked')?.value||'count';}
+async function loadTwcConfigs(){try{twcConfigs=await(await fetch('/api/tech-wage-config')).json();renderTwcList();}catch(e){document.getElementById('twcConfigList').innerHTML=`<div style="color:#ef4444">${e.message}</div>`;}}
+function renderTwcList(){const el=document.getElementById('twcConfigList');if(!twcConfigs.length){el.innerHTML=`<div class="empty-state"><div class="big">🔧</div><div>尚無設定，點擊「新增設定」建立工資代碼追蹤</div></div>`;return;}const methodLabel={count:'🚗 台數',amount:'💰 工資金額',hours:'⏱️ 工時'};el.innerHTML=twcConfigs.map(c=>{const codes=(c.work_codes||[]).map(wc=>wc.type==='range'?`<span class="badge badge-blue" style="font-size:11px">${wc.from}～${wc.to}</span>`:`<span class="badge badge-blue" style="font-size:11px">${wc.value}</span>`).join('');const acs=(c.account_types||[]).map(a=>`<span class="badge badge-gray" style="font-size:11px">${a}</span>`).join('');return`<div class="config-item"><div class="config-item-info"><div class="config-item-name">${c.config_name}</div>${c.description?`<div class="config-item-desc">${c.description}</div>`:''}<div class="config-item-tags"><span class="badge badge-green">${methodLabel[c.stat_method]||c.stat_method}</span>${codes}${acs}</div></div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-secondary btn-sm" onclick="twcStartEdit(${c.id})">編輯</button><button class="btn btn-danger btn-sm" onclick="twcDelete(${c.id},'${c.config_name.replace(/'/g,"\\'")}')">刪除</button></div></div>`;}).join('');}
+function twcStartNew(){twcEditingId=null;twcCodes=[];document.getElementById('twcEditorTitle').textContent='新增設定';document.getElementById('twcName').value='';document.getElementById('twcDesc').value='';document.getElementById('twcCodeInput').value='';document.getElementById('twcCodeHint').textContent='';selectTwcMethod('count');_buildChips('twcAccountChips',TWC_ALL_ACCOUNT,[]);renderTwcCodeList();openModal('twcModal');setTimeout(()=>document.getElementById('twcName').focus(),100);}
+function twcStartEdit(id){const cfg=twcConfigs.find(c=>c.id===id);if(!cfg)return;twcEditingId=id;twcCodes=[...(cfg.work_codes||[])];document.getElementById('twcEditorTitle').textContent=`編輯 — ${cfg.config_name}`;document.getElementById('twcName').value=cfg.config_name;document.getElementById('twcDesc').value=cfg.description||'';selectTwcMethod(cfg.stat_method||'count');_buildChips('twcAccountChips',TWC_ALL_ACCOUNT,cfg.account_types||[]);renderTwcCodeList();openModal('twcModal');}
+function twcCancelEdit(){closeModal('twcModal');twcCodes=[];}
+function renderTwcCodeList(){const el=document.getElementById('twcCodeList');if(!twcCodes.length){el.innerHTML='<div style="color:#64748b;font-size:12px;padding:4px 0 8px">尚未加入代碼</div>';return;}el.innerHTML=twcCodes.map((wc,i)=>`<div class="filter-tag-row"><span class="type-badge" style="background:rgba(59,130,246,.2);color:#60a5fa">${wc.type==='range'?'範圍':'精確'}</span><span style="font-size:13px;font-weight:600;flex:1">${wc.type==='range'?`${wc.from}～${wc.to}`:wc.value}</span><button class="remove-btn" onclick="removeTwcCode(${i})">×</button></div>`).join('');}
+function removeTwcCode(i){twcCodes.splice(i,1);renderTwcCodeList();}
+function addTwcCode(){const raw=document.getElementById('twcCodeInput').value.trim(),hint=document.getElementById('twcCodeHint');if(!raw){hint.textContent='請輸入代碼';return;}if(raw.includes('-')){const[from,to]=raw.split('-').map(s=>s.trim());if(!from||!to){hint.textContent='範圍格式：起始碼-結束碼';return;}twcCodes.push({type:'range',from,to});}else{twcCodes.push({type:'exact',value:raw});}document.getElementById('twcCodeInput').value='';hint.textContent='';renderTwcCodeList();}
+async function twcSave(){const config_name=document.getElementById('twcName').value.trim(),description=document.getElementById('twcDesc').value.trim(),stat_method=getTwcMethod(),account_types=_getCheckedValues('twcAccountChips');if(!config_name){alert('請輸入名稱');return;}if(!twcCodes.length){alert('請至少加入一個工資代碼');return;}const btn=document.getElementById('twcBtnSave');btn.disabled=true;try{const url=twcEditingId?`/api/tech-wage-config/${twcEditingId}`:'/api/tech-wage-config';const method=twcEditingId?'PUT':'POST';const res=await(await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify({config_name,description,work_codes:twcCodes,account_types,stat_method})})).json();if(res.error)throw new Error(res.error);twcCancelEdit();await loadTwcConfigs();}catch(e){alert('儲存失敗：'+e.message);}finally{btn.disabled=false;}}
+async function twcDelete(id,name){if(!confirm(`確定刪除「${name}」？`))return;await fetch(`/api/tech-wage-config/${id}`,{method:'DELETE'});await loadTwcConfigs();}
+
+// ══ 零配精品銷售 — Excel 匯入 ══
+function selectPerfUpType(val){['target','last_year'].forEach(v=>{const lbl=document.getElementById(`perfUpTypeLabel-${v}`);const isSelected=v===val;if(lbl){lbl.style.background=isSelected?'rgba(59,130,246,.15)':'#1e293b';lbl.style.borderColor=isSelected?(v==='target'?'#3b82f6':'#10b981'):'#2d3f56';}const radio=lbl?.querySelector('input[type=radio]');if(radio)radio.checked=isSelected;});const hint=document.getElementById('perfUpYearHint');if(hint)hint.style.display=val==='last_year'?'':'none';}
+function initPerfUpYear(){const sel=document.getElementById('perfUpYear');if(!sel||sel.options.length>1)return;const now=new Date();for(let y=now.getFullYear()+1;y>=now.getFullYear()-2;y--){const o=document.createElement('option');o.value=y;o.textContent=`${y}年`;if(y===now.getFullYear())o.selected=true;sel.appendChild(o);}}
+async function downloadPerfTemplate(){try{const metrics=await(await fetch('/api/performance-metrics')).json();if(!metrics.length){alert('尚未建立任何指標，請先新增指標');return;}const now=new Date(),y=now.getFullYear();const header=['期間','據點',...metrics.map(m=>`${m.metric_name}_目標`),...metrics.map(m=>`${m.metric_name}_去年`)];const rows=[];for(let mo=1;mo<=12;mo++){const period=`${y}${String(mo).padStart(2,'0')}`;['AMA','AMC','AMD'].forEach(br=>{rows.push([period,br,...metrics.map(()=>''),...metrics.map(()=>'')]);})}const csv=[header,...rows].map(r=>r.join(',')).join('\r\n');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`零配精品目標範本_${y}.csv`;a.click();URL.revokeObjectURL(url);}catch(e){alert('下載失敗：'+e.message);}}
+async function uploadPerfTargetsFile(input){const file=input.files[0];if(!file)return;const year=document.getElementById('perfUpYear').value,dataType=document.querySelector('input[name="perf_up_type"]:checked')?.value||'target';if(!year){alert('請先選擇年份');input.value='';return;}const statusEl=document.getElementById('perfUpStatus'),resultEl=document.getElementById('perfUpResult');statusEl.textContent='解析中...';resultEl.innerHTML='';const formData=new FormData();formData.append('file',file);formData.append('year',year);formData.append('dataType',dataType);try{const res=await(await fetch('/api/upload-performance-targets-native',{method:'POST',body:formData})).json();if(res.error){resultEl.innerHTML=`<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#ef4444">❌ ${res.error}</div>`;}else{const createdHtml=res.created?.length?`<br><span style="color:#f59e0b">✨ 自動新增指標：${res.created.join('、')}</span>`:'';const yearNoteHtml=res.yearNote?`<br><span style="color:#f59e0b;font-size:11px">⚠️ ${res.yearNote}</span>`:'';resultEl.innerHTML=`<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#10b981">✅ 成功匯入 ${year} 年共 <strong>${res.count}</strong> 筆${createdHtml}${yearNoteHtml}</div>`;if(typeof loadPerfMetrics==='function')loadPerfMetrics();}statusEl.textContent='';input.value='';}catch(e){statusEl.textContent='';resultEl.innerHTML=`<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#ef4444">❌ ${e.message}</div>`;}}
+
+// ══ 業績目標設定 ══
+let perfMetrics=[],perfEditingId=null,perfFilters=[],perfLookupTimer=null,perfTwcCodes=[];
+const PERF_ALL_ACCOUNT=['一般','票劵','內結','保險','延保','保固','善意維修','VSA'];
+const PERF_BOUTIQUE=['精品','配件'];
+const PERF_TYPE_LABEL={repair_income:'🔧 維修收入(合計)',repair_subfield:'🔨 維修收入(子欄位)',parts:'🔩 零件銷售',boutique:'💎 精品配件',tech_wage:'🚗 工資代碼'};
+const PERF_FIELD_UNIT={amount:'元',qty:'件',count:'筆',hours:'小時'};
+const PERF_SUBFIELDS=[{value:'bodywork_income',label:'鈑金收入'},{value:'paint_income',label:'烤漆收入'},{value:'engine_wage',label:'引擎工資'},{value:'parts_income',label:'零件收入'},{value:'accessories_income',label:'配件收入'},{value:'boutique_income',label:'精品收入'},{value:'carwash_income',label:'洗車美容'},{value:'outsource_income',label:'外包收入'},{value:'addon_income',label:'附加服務'},{value:'total_untaxed',label:'合計（未稅）'},];
+function selectPerfTwcMethod(val){document.querySelectorAll('input[name="perf_twc_method"]').forEach(el=>el.checked=el.value===val);['count','amount','hours'].forEach(v=>document.getElementById(`perfTwcSmLabel-${v}`)?.classList.toggle('selected',v===val));}
+function getPerfTwcMethod(){return document.querySelector('input[name="perf_twc_method"]:checked')?.value||'count';}
+function renderPerfTwcCodeList(){const el=document.getElementById('perfTwcCodeList');if(!el)return;if(!perfTwcCodes.length){el.innerHTML='<div style="color:#64748b;font-size:12px;padding:4px 0 8px">尚未加入代碼</div>';return;}el.innerHTML=perfTwcCodes.map((wc,i)=>`<div class="filter-tag-row"><span class="type-badge" style="background:rgba(59,130,246,.2);color:#60a5fa">${wc.type==='range'?'範圍':'精確'}</span><span style="font-size:13px;font-weight:600;flex:1">${wc.type==='range'?`${wc.from}～${wc.to}`:wc.value}</span><button class="remove-btn" onclick="removePerfTwcCode(${i})">×</button></div>`).join('');}
+function removePerfTwcCode(i){perfTwcCodes.splice(i,1);renderPerfTwcCodeList();}
+function addPerfTwcCode(){const raw=document.getElementById('perfTwcCodeInput').value.trim();if(!raw)return;if(raw.includes('-')){const[from,to]=raw.split('-').map(s=>s.trim());if(from&&to)perfTwcCodes.push({type:'range',from,to});}else{perfTwcCodes.push({type:'exact',value:raw});}document.getElementById('perfTwcCodeInput').value='';renderPerfTwcCodeList();}
+function _buildSubfieldChips(selectedVals){document.getElementById('perfSubfieldChips').innerHTML=PERF_SUBFIELDS.map(sf=>{const on=selectedVals.includes(sf.value);return`<label class="part-type-chip ${on?'checked':''}" onclick="toggleGenericChip(this)"><input type="checkbox" value="${sf.value}" ${on?'checked':''}>${sf.label}</label>`;}).join('');}
+function selectWoMode(val){document.querySelectorAll('input[name="wo_mode"]').forEach(el=>el.checked=el.value===val);['wo_has','wo_exclude','sum'].forEach(v=>document.getElementById(`woModeLabel-${v}`)?.classList.toggle('selected',v===val));}
+function getWoMode(){return document.querySelector('input[name="wo_mode"]:checked')?.value||'wo_has';}
+async function loadPerfMetrics(){try{perfMetrics=await(await fetch('/api/performance-metrics')).json();renderPerfMetricList();updatePerfTgtSelect();}catch(e){document.getElementById('perfMetricList').innerHTML=`<div style="color:#ef4444">${e.message}</div>`;}}
+function renderPerfMetricList(){const el=document.getElementById('perfMetricList');if(!perfMetrics.length){el.innerHTML=`<div class="empty-state"><div class="big">🎯</div><div>尚未建立指標，點擊「新增指標」開始設定</div></div>`;return;}el.innerHTML=perfMetrics.map(m=>`<div class="config-item"><div class="config-item-info"><div class="config-item-name">${m.metric_name}</div>${m.description?`<div class="config-item-desc">${m.description}</div>`:''}<div class="config-item-tags"><span class="badge badge-blue">${PERF_TYPE_LABEL[m.metric_type]||m.metric_type}</span>${m.stat_field&&m.metric_type==='parts'?`<span class="badge badge-gray">統計：${PERF_FIELD_UNIT[m.stat_field]||m.stat_field}</span>`:''} ${m.unit?`<span class="badge badge-gray">單位：${m.unit}</span>`:''} ${(m.filters||[]).slice(0,4).map(f=>`<span class="badge" style="font-size:10px;background:rgba(100,116,139,.12);color:#94a3b8">${f.type}:${f.value}</span>`).join('')} ${(m.filters||[]).length>4?`<span style="font-size:11px;color:#475569">+${m.filters.length-4}…</span>`:''}</div></div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-secondary btn-sm" onclick="perfStartEdit(${m.id})">編輯</button><button class="btn btn-danger btn-sm" onclick="perfDelete(${m.id},'${m.metric_name.replace(/'/g,"\\'")}')">刪除</button></div></div>`).join('');}
+function updatePerfTgtSelect(){const sel=document.getElementById('perfTgtMetric');const cur=sel.value;sel.innerHTML='<option value="">選擇指標...</option>';perfMetrics.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.metric_name;sel.appendChild(o);});if(cur)sel.value=cur;}
+function onPerfTypeChange(){const t=document.getElementById('perfType').value;document.getElementById('perfRepairOptions').style.display=t==='repair_income'?'':'none';document.getElementById('perfPartsOptions').style.display=t==='parts'?'':'none';document.getElementById('perfBoutiqueOptions').style.display=t==='boutique'?'':'none';document.getElementById('perfSubfieldOptions').style.display=t==='repair_subfield'?'':'none';document.getElementById('perfTechWageOptions').style.display=t==='tech_wage'?'':'none';if(t==='repair_subfield'){_buildSubfieldChips([]);_buildChips('perfSubfieldAccountChips',PERF_ALL_ACCOUNT,[]);}if(t==='tech_wage'){perfTwcCodes=[];renderPerfTwcCodeList();_buildChips('perfTwcAccountChips',PERF_ALL_ACCOUNT,[]);selectPerfTwcMethod('count');}}
+function _buildChips(containerId,values,selectedVals){document.getElementById(containerId).innerHTML=values.map(v=>{const on=selectedVals.includes(v);return`<label class="part-type-chip ${on?'checked':''}" onclick="toggleGenericChip(this)"><input type="checkbox" value="${v}" ${on?'checked':''}>${v}</label>`;}).join('');}
+function toggleGenericChip(el){const cb=el.querySelector('input');cb.checked=!cb.checked;el.classList.toggle('checked',cb.checked);}
+function _getCheckedValues(containerId){return[...document.querySelectorAll(`#${containerId} input:checked`)].map(cb=>cb.value);}
+function perfStartNew(){perfEditingId=null;perfFilters=[];perfTwcCodes=[];document.getElementById('perfEditorTitle').textContent='新增指標';['perfName','perfDesc','perfUnit'].forEach(id=>document.getElementById(id).value='');document.getElementById('perfType').value='repair_income';onPerfTypeChange();_buildChips('perfRepairAccountTypes',PERF_ALL_ACCOUNT,[]);_buildChips('perfBoutiqueTypeChips',PERF_BOUTIQUE,['精品','配件']);_buildChips('perfBoutiqueAccountChips',PERF_ALL_ACCOUNT,[]);_buildSubfieldChips([]);_buildChips('perfSubfieldAccountChips',PERF_ALL_ACCOUNT,[]);selectWoMode('wo_has');selectPerfStatMethod('amount');renderPerfFilterList();openModal('perfModal');setTimeout(()=>document.getElementById('perfName').focus(),100);}
+function perfStartEdit(id){const m=perfMetrics.find(x=>x.id===id);if(!m)return;perfEditingId=id;perfFilters=(m.filters||[]).map(f=>({...f}));document.getElementById('perfEditorTitle').textContent=`編輯指標 — ${m.metric_name}`;document.getElementById('perfName').value=m.metric_name;document.getElementById('perfDesc').value=m.description||'';document.getElementById('perfUnit').value=m.unit||'';document.getElementById('perfType').value=m.metric_type;onPerfTypeChange();if(m.metric_type==='repair_income'){_buildChips('perfRepairAccountTypes',PERF_ALL_ACCOUNT,perfFilters.filter(f=>f.type==='account_type').map(f=>f.value));}if(m.metric_type==='repair_subfield'){const sf=perfFilters.filter(f=>f.type==='subfield').map(f=>f.value);const ac=perfFilters.filter(f=>f.type==='account_type').map(f=>f.value);const wm=perfFilters.find(f=>f.type==='wo_mode')?.value||'wo_has';_buildSubfieldChips(sf);_buildChips('perfSubfieldAccountChips',PERF_ALL_ACCOUNT,ac);selectWoMode(wm);}if(m.metric_type==='tech_wage'){perfTwcCodes=perfFilters.filter(f=>f.type==='work_code').map(f=>{if(f.value.includes('-')){const[from,to]=f.value.split('-');return{type:'range',from,to};}return{type:'exact',value:f.value};});const ac=perfFilters.filter(f=>f.type==='account_type').map(f=>f.value);renderPerfTwcCodeList();_buildChips('perfTwcAccountChips',PERF_ALL_ACCOUNT,ac);selectPerfTwcMethod(m.stat_field||'count');}if(m.metric_type==='boutique'){const bt=perfFilters.filter(f=>f.type==='boutique_type').map(f=>f.value);const ac=perfFilters.filter(f=>f.type==='account_type').map(f=>f.value);_buildChips('perfBoutiqueTypeChips',PERF_BOUTIQUE,bt.length?bt:[]);_buildChips('perfBoutiqueAccountChips',PERF_ALL_ACCOUNT,ac);}if(m.metric_type==='parts'){selectPerfStatMethod(m.stat_field||'amount');renderPerfFilterList();}openModal('perfModal');}
+function perfCancelEdit(){closeModal('perfModal');perfFilters=[];}
+function selectPerfStatMethod(val){document.querySelectorAll('input[name="perf_stat_method"]').forEach(el=>el.checked=el.value===val);['amount','qty','count'].forEach(v=>document.getElementById(`perfSmLabel-${v}`)?.classList.toggle('selected',v===val));}
+function getPerfStatMethod(){return document.querySelector('input[name="perf_stat_method"]:checked')?.value||'amount';}
+const _perfTypeLabel={category_code:'零件類別碼',function_code:'功能碼',part_number:'零件編號',part_type:'付款類別'};
+function renderPerfFilterList(){const el=document.getElementById('perfFilterList');if(!el)return;if(!perfFilters.length){el.innerHTML='<div style="color:#64748b;font-size:12px;padding:4px 0 8px">尚未新增篩選條件</div>';return;}el.innerHTML=perfFilters.map((f,i)=>`<div class="filter-tag-row"><span class="type-badge type-${f.type}">${_perfTypeLabel[f.type]||f.type}</span><span style="font-size:13px;font-weight:600;flex:1">${f.value}</span><button class="remove-btn" onclick="removePerfFilter(${i})">×</button></div>`).join('');}
+function removePerfFilter(i){perfFilters.splice(i,1);renderPerfFilterList();}
+function onPerfFilterTypeChange(){const t=document.getElementById('perfAddType').value,isP=t==='part_type';document.getElementById('perfLookupWrap').style.display=isP?'none':'';document.getElementById('perfBtnAddFilter').style.display=isP?'none':'';document.getElementById('perfPartTypePanel').style.display=isP?'':'none';if(isP)renderPerfPTCheckboxes();}
+function renderPerfPTCheckboxes(){const existing=perfFilters.filter(f=>f.type==='part_type').map(f=>f.value);document.getElementById('perfPartTypeCheckboxes').innerHTML=PERF_ALL_ACCOUNT.map(pt=>{const al=existing.includes(pt);return`<label class="part-type-chip ${al?'disabled':''}" onclick="togglePerfPT(this)"><input type="checkbox" value="${pt}" ${al?'disabled':''}>${pt}${al?' ✓':''}</label>`;}).join('');}
+function togglePerfPT(el){if(el.classList.contains('disabled'))return;const cb=el.querySelector('input');cb.checked=!cb.checked;el.classList.toggle('checked',cb.checked);}
+function addPerfFilter(){const type=document.getElementById('perfAddType').value,value=document.getElementById('perfAddValue').value.trim();if(!value||perfFilters.some(f=>f.type===type&&f.value===value))return;perfFilters.push({type,value});renderPerfFilterList();document.getElementById('perfAddValue').value='';document.getElementById('perfLookupDropdown').style.display='none';}
+function addPerfPartTypeFilters(){[...document.querySelectorAll('#perfPartTypeCheckboxes input:checked')].forEach(cb=>{if(!perfFilters.some(f=>f.type==='part_type'&&f.value===cb.value))perfFilters.push({type:'part_type',value:cb.value});});renderPerfFilterList();renderPerfPTCheckboxes();}
+function debouncePerfLookup(){clearTimeout(perfLookupTimer);perfLookupTimer=setTimeout(doPerfLookup,280);}
+async function doPerfLookup(){const type=document.getElementById('perfAddType').value;if(type==='part_type')return;const q=document.getElementById('perfAddValue').value.trim(),dd=document.getElementById('perfLookupDropdown');if(!q){dd.style.display='none';return;}try{const data=await(await fetch(`/api/sa-config/parts-lookup?type=${type}&q=${encodeURIComponent(q)}`)).json();if(!data.length){dd.style.display='none';return;}dd.innerHTML=data.map(item=>type==='part_number'?`<div class="lookup-item" onclick="pickPerfLookup('${esc(item.value)}')"><div class="lookup-item-val">${item.value}</div><div class="lookup-item-sub">${item.label||''}</div></div>`:`<div class="lookup-item" onclick="pickPerfLookup('${esc(item.value)}')"><div class="lookup-item-val">${item.value}</div><div class="lookup-item-sub">${(item.sample_names||'').slice(0,60)}</div></div>`).join('');dd.style.display='block';}catch(e){dd.style.display='none';}}
+function pickPerfLookup(val){document.getElementById('perfAddValue').value=val;document.getElementById('perfLookupDropdown').style.display='none';}
+async function perfSave(){
+  const metric_name=document.getElementById('perfName').value.trim(),description=document.getElementById('perfDesc').value.trim(),metric_type=document.getElementById('perfType').value,unit=document.getElementById('perfUnit').value.trim();
+  if(!metric_name){alert('請輸入指標名稱');return;}
+  let filters=[],stat_field='amount';
+  if(metric_type==='repair_income'){filters=_getCheckedValues('perfRepairAccountTypes').map(v=>({type:'account_type',value:v}));}
+  else if(metric_type==='repair_subfield'){const sf=_getCheckedValues('perfSubfieldChips');const ac=_getCheckedValues('perfSubfieldAccountChips');const wm=getWoMode();if(!sf.length){alert('請至少勾選一個判斷欄位');return;}filters=[...sf.map(v=>({type:'subfield',value:v})),...ac.map(v=>({type:'account_type',value:v})),{type:'wo_mode',value:wm}];stat_field='amount';}
+  else if(metric_type==='parts'){if(!perfFilters.length){alert('請至少新增一個篩選條件');return;}filters=perfFilters.map(({type,value})=>({type,value}));stat_field=getPerfStatMethod();}
+  else if(metric_type==='boutique'){const bt=_getCheckedValues('perfBoutiqueTypeChips');if(!bt.length){alert('請至少勾選一個品項類型（精品 / 配件）');return;}const ac=_getCheckedValues('perfBoutiqueAccountChips');filters=[...bt.map(v=>({type:'boutique_type',value:v})),...ac.map(v=>({type:'account_type',value:v}))];stat_field='amount';}
+  else if(metric_type==='tech_wage'){if(!perfTwcCodes.length){alert('請至少加入一個工資代碼');return;}const twcFilters=perfTwcCodes.map(wc=>({type:'work_code',value:wc.type==='range'?`${wc.from}-${wc.to}`:wc.value}));const ac=_getCheckedValues('perfTwcAccountChips').map(v=>({type:'account_type',value:v}));filters=[...twcFilters,...ac];stat_field=getPerfTwcMethod();}
+  const btn=document.getElementById('perfBtnSave');btn.disabled=true;
+  try{const url=perfEditingId?`/api/performance-metrics/${perfEditingId}`:'/api/performance-metrics';const res=await(await fetch(url,{method:perfEditingId?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric_name,description,metric_type,filters,stat_field,unit})})).json();if(res.error)throw new Error(res.error);perfCancelEdit();await loadPerfMetrics();}catch(e){alert('儲存失敗：'+e.message);}finally{btn.disabled=false;}
+}
+async function perfDelete(id,name){if(!confirm(`確定刪除指標「${name}」及其所有目標？`))return;await fetch(`/api/performance-metrics/${id}`,{method:'DELETE'});await loadPerfMetrics();}
+async function loadPerfTgtPeriods(){try{const periods=await(await fetch('/api/periods')).json();const sel=document.getElementById('perfTgtPeriod');sel.innerHTML='<option value="">選擇期間...</option>';periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=`${p.slice(0,4)}年${p.slice(4)}月`;sel.appendChild(o);});const _cp=`${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}`;sel.value=periods.includes(_cp)?_cp:(periods.length?periods[0]:'');}catch(e){}}
+function onPerfTgtMetricChange(){document.getElementById('perfTargetGrid').style.display='none';}
+async function loadPerfTargets(){
+  const metricId=document.getElementById('perfTgtMetric').value,period=document.getElementById('perfTgtPeriod').value;
+  if(!metricId||!period){alert('請選擇指標和期間');return;}
+  const metric=perfMetrics.find(m=>m.id==metricId),unit=metric?.unit||PERF_FIELD_UNIT[metric?.stat_field]||'元';
+  const hintEl=document.getElementById('perfTgtHint');
+  if(hintEl)hintEl.innerHTML=`💡 設定 <strong>${metric?.metric_name}</strong> 在 <strong>${period.slice(0,4)}年${period.slice(4)}月</strong> 的目標數值。單位：${unit}`;
+  try{
+    const data=await(await fetch(`/api/performance-targets?metric_id=${metricId}&period=${period}`)).json();
+    const tMap={};data.forEach(t=>{tMap[t.branch]=t;});
+    document.getElementById('perfTgtBody').innerHTML=['AMA','AMC','AMD'].map(br=>{const t=tMap[br]||{},bCol=br==='AMA'?'#3b82f6':br==='AMC'?'#10b981':'#f59e0b';return`<tr><td style="padding:10px 12px;border-bottom:1px solid rgba(45,63,86,.4)"><span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:${bCol}22;color:${bCol}">${br}</span></td><td style="padding:10px 12px;border-bottom:1px solid rgba(45,63,86,.4)"><input type="number" class="form-input" id="perfTgt-${br}" value="${t.target_value||''}" placeholder="目標數值" step="any" style="width:100%;text-align:right;min-width:120px"></td><td style="padding:10px 12px;border-bottom:1px solid rgba(45,63,86,.4)"><input type="number" class="form-input" id="perfLY-${br}" value="${t.last_year_value||''}" placeholder="去年同期" step="any" style="width:100%;text-align:right;min-width:120px"></td></tr>`;}).join('');
+    document.getElementById('perfTargetGrid').style.display='';document.getElementById('perfTgtMsg').textContent='';
+  }catch(e){alert('載入失敗：'+e.message);}
+}
+async function savePerfTargets(){
+  const metricId=document.getElementById('perfTgtMetric').value,period=document.getElementById('perfTgtPeriod').value;if(!metricId||!period)return;
+  const entries=['AMA','AMC','AMD'].map(br=>({branch:br,target_value:parseFloat(document.getElementById(`perfTgt-${br}`)?.value)||null,last_year_value:parseFloat(document.getElementById(`perfLY-${br}`)?.value)||null}));
+  const btn=document.getElementById('perfBtnSaveTgt');btn.disabled=true;const msgEl=document.getElementById('perfTgtMsg');msgEl.textContent='儲存中...';msgEl.style.color='#64748b';
+  try{const res=await(await fetch('/api/performance-targets/batch',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric_id:metricId,period,entries})})).json();if(res.error)throw new Error(res.error);msgEl.textContent='✅ 目標已儲存';msgEl.style.color='#10b981';}
+  catch(e){msgEl.textContent='❌ '+e.message;msgEl.style.color='#ef4444';}finally{btn.disabled=false;}
+}
+
+// ══ 營收目標 ══
+const REV_COLS=[{key:'paid',label:'有費營收'},{key:'bodywork',label:'鈑烤營收'},{key:'general',label:'一般營收'},{key:'extended',label:'延保營收'}];
+async function loadRevPeriods(){try{const periods=await(await fetch('/api/periods')).json();const sel=document.getElementById('revPeriodSel');sel.innerHTML='<option value="">選擇期間...</option>';periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=`${p.slice(0,4)}年${p.slice(4)}月`;sel.appendChild(o);});const _rcp=`${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}`;sel.value=periods.includes(_rcp)?_rcp:(periods.length?periods[0]:'');if(sel.value)loadRevManual();const yearSel=document.getElementById('revNativeYear');if(yearSel){const now=new Date();yearSel.innerHTML='<option value="">選擇年份...</option>';for(let y=now.getFullYear()+1;y>=now.getFullYear()-2;y--){const o=document.createElement('option');o.value=y;o.textContent=`${y}年`;if(y===now.getFullYear())o.selected=true;yearSel.appendChild(o);}}}catch(e){}}
+async function uploadRevNativeFile(input){const file=input.files[0];if(!file)return;const year=document.getElementById('revNativeYear').value,dataType=document.querySelector('input[name="rev_data_type"]:checked')?.value||'target';if(!year){alert('請先選擇年份');input.value='';return;}const statusEl=document.getElementById('revNativeStatus'),resultEl=document.getElementById('revNativeResult'),typeLabel=dataType==='last_year'?'去年實績':'月目標';statusEl.textContent='解析中...';resultEl.innerHTML='';const formData=new FormData();formData.append('file',file);formData.append('year',year);formData.append('dataType',dataType);try{const res=await(await fetch('/api/upload-revenue-targets-native',{method:'POST',body:formData})).json();if(res.error)throw new Error(res.error);statusEl.textContent='';const periodList=Object.entries(res.summary||{}).sort(([a],[b])=>a.localeCompare(b)).map(([p,brs])=>`${p.slice(0,4)}年${p.slice(4)}月（${brs.join('/')}）`).join('、');resultEl.innerHTML=`<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#10b981">✅ 成功匯入 ${res.year} 年 <strong>${typeLabel}</strong> 共 <strong>${res.count}</strong> 筆<br><span style="font-size:12px;color:#64748b">${periodList}</span></div>`;loadRevList();input.value='';}catch(e){statusEl.textContent='';resultEl.innerHTML=`<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#ef4444">❌ ${e.message}</div>`;}}
+function selectRevType(val){['target','last_year'].forEach(v=>{const lbl=document.getElementById(`revTypeLabel-${v}`);const isSelected=v===val;if(lbl){lbl.style.background=isSelected?'rgba(59,130,246,.15)':'#1e293b';lbl.style.borderColor=isSelected?(v==='target'?'#3b82f6':'#10b981'):'#2d3f56';}const radio=lbl?.querySelector('input[type=radio]');if(radio)radio.checked=isSelected;});}
+async function loadRevManual(){const period=document.getElementById('revPeriodSel').value,grid=document.getElementById('revManualGrid');if(!period){grid.style.display='none';return;}try{const rows=await(await fetch(`/api/revenue-targets?period=${period}`)).json();const tMap={};rows.forEach(r=>{tMap[r.branch]=r;});document.getElementById('revManualBody').innerHTML=['AMA','AMC','AMD'].map(br=>{const t=tMap[br]||{};const bCol=br==='AMA'?'#3b82f6':br==='AMC'?'#10b981':'#f59e0b';const inp=(field)=>`<input type="number" id="rev-${br}-${field}" value="${t[field]||''}" placeholder="—" step="any" class="form-input" style="width:100%;min-width:110px;text-align:right">`;return`<tr><td><span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:${bCol}22;color:${bCol}">${br}</span></td>${REV_COLS.map(c=>`<td style="padding:6px 8px">${inp(c.key+'_target')}</td><td style="padding:6px 8px">${inp(c.key+'_last_year')}</td>`).join('')}</tr>`;}).join('');grid.style.display='';document.getElementById('revManualMsg').textContent='';}catch(e){document.getElementById('revManualMsg').textContent='載入失敗: '+e.message;}}
+async function saveRevManual(){const period=document.getElementById('revPeriodSel').value;if(!period)return;const entries=['AMA','AMC','AMD'].map(br=>{const e={branch:br,period};REV_COLS.forEach(c=>{e[c.key+'_target']=parseFloat(document.getElementById(`rev-${br}-${c.key}_target`)?.value)||null;e[c.key+'_last_year']=parseFloat(document.getElementById(`rev-${br}-${c.key}_last_year`)?.value)||null;});return e;});const msgEl=document.getElementById('revManualMsg');msgEl.textContent='儲存中...';msgEl.style.color='#64748b';try{const res=await(await fetch('/api/revenue-targets/batch',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({entries})})).json();if(res.error)throw new Error(res.error);msgEl.textContent='✅ 已儲存';msgEl.style.color='#10b981';loadRevList();}catch(e){msgEl.textContent='❌ '+e.message;msgEl.style.color='#ef4444';}}
+async function loadRevList(){const el=document.getElementById('revList');try{const rows=await(await fetch('/api/revenue-targets')).json();if(!rows.length){el.innerHTML='<div style="color:#64748b;font-size:13px;padding:8px 0">尚無設定</div>';return;}const byPeriod={};rows.forEach(r=>{if(!byPeriod[r.period])byPeriod[r.period]=[];byPeriod[r.period].push(r);});const periods=Object.keys(byPeriod).sort().reverse();el.innerHTML=`<div style="overflow-x:auto"><table style="width:100%;font-size:12px;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:8px 12px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56">期間</th><th style="text-align:left;padding:8px 12px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56">據點</th>${REV_COLS.map(c=>`<th style="text-align:right;padding:8px 12px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56">${c.label}<br>目標/去年</th>`).join('')}<th style="padding:8px 12px;background:#0f172a;border-bottom:1px solid #2d3f56"></th></tr></thead><tbody>${periods.map(p=>byPeriod[p].map(r=>{const bCol=r.branch==='AMA'?'#3b82f6':r.branch==='AMC'?'#10b981':'#f59e0b';const fk=v=>v?(parseInt(v)/1000).toLocaleString()+'K':'—';return`<tr><td style="padding:8px 12px;border-bottom:1px solid rgba(45,63,86,.3)">${p.slice(0,4)}年${p.slice(4)}月</td><td style="padding:8px 12px;border-bottom:1px solid rgba(45,63,86,.3)"><span style="background:${bCol}22;color:${bCol};padding:2px 8px;border-radius:5px;font-weight:700">${r.branch}</span></td>${REV_COLS.map(c=>`<td style="text-align:right;padding:8px 12px;border-bottom:1px solid rgba(45,63,86,.3);color:#94a3b8">${fk(r[c.key+'_target'])} / ${fk(r[c.key+'_last_year'])}</td>`).join('')}<td style="padding:8px 12px;border-bottom:1px solid rgba(45,63,86,.3)"><button class="btn btn-danger btn-sm" onclick="deleteRevRow('${r.branch}','${p}')">刪除</button></td></tr>`;}).join('')).join('')}</tbody></table></div>`;}catch(e){el.innerHTML=`<div style="color:#ef4444">${e.message}</div>`;}}
+async function deleteRevRow(branch,period){if(!confirm(`確定刪除 ${branch} ${period.slice(0,4)}年${period.slice(4)}月 的目標設定？`))return;await fetch(`/api/revenue-targets?branch=${branch}&period=${period}`,{method:'DELETE'});loadRevList();}
+function downloadRevTemplate(){const header=['期間','據點','有費營收_目標','有費營收_去年','鈑烤營收_目標','鈑烤營收_去年','一般營收_目標','一般營收_去年','延保營收_目標','延保營收_去年'];const now=new Date(),y=now.getFullYear();const defaults={AMA:[36000000,37000000,8000000,7500000,21000000,22000000,800000,750000],AMC:[10000000,11000000,2000000,1800000,5700000,6000000,200000,180000],AMD:[16000000,17000000,2500000,2300000,8800000,9500000,300000,280000]};const rows=[];for(let mo=1;mo<=12;mo++){const period=`${y}${String(mo).padStart(2,'0')}`;['AMA','AMC','AMD'].forEach(br=>{rows.push([period,br,...defaults[br]]);});}const csv=[header,...rows].map(r=>r.join(',')).join('\r\n');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`營收目標範本_${y}全年.csv`;a.click();URL.revokeObjectURL(url);}
+async function uploadRevFile(input){const file=input.files[0];if(!file)return;const statusEl=document.getElementById('revUploadStatus'),resultEl=document.getElementById('revUploadResult');statusEl.textContent='上傳中...';resultEl.innerHTML='';const formData=new FormData();formData.append('file',file);try{const res=await(await fetch('/api/upload-revenue-targets',{method:'POST',body:formData})).json();if(res.error)throw new Error(res.error);statusEl.textContent='';resultEl.innerHTML=`<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#10b981">✅ 成功匯入 <strong>${res.count}</strong> 筆資料</div>`;loadRevList();input.value='';}catch(e){statusEl.textContent='';resultEl.innerHTML=`<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#ef4444">❌ ${e.message}</div>`;}}
+
+// ══ 個人業績目標 ══
+let _ptMetrics=[], _ptPersons=[], _ptBranchTarget=0;
+
+async function initPtSelectors() {
+  // 避免重複初始化
+  if (document.getElementById('ptMetricSel').options.length > 1) return;
+  try {
+    _ptMetrics = await fetch('/api/performance-metrics').then(r=>r.json());
+    const sel = document.getElementById('ptMetricSel');
+    sel.innerHTML = '<option value="">選擇指標...</option>' +
+      _ptMetrics.map(m=>`<option value="${m.id}">${m.metric_name}</option>`).join('');
+    const periods = await fetch('/api/periods').then(r=>r.json());
+    const pSel = document.getElementById('ptPeriodSel');
+    pSel.innerHTML = '<option value="">選擇期間...</option>' +
+      periods.slice(0,24).map(p=>`<option value="${p}">${p.slice(0,4)}年${parseInt(p.slice(4))}月</option>`).join('');
+    const now = new Date();
+    const cur = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}`;
+    pSel.value = periods.includes(cur) ? cur : (periods[0]||'');
+  } catch(e) {}
+}
+
+function onPtChange() {
+  document.getElementById('ptGrid').style.display = 'none';
+  document.getElementById('ptMsg').textContent = '';
+}
+
+async function loadPersonTargets() {
+  const metricId = document.getElementById('ptMetricSel').value;
+  const period   = document.getElementById('ptPeriodSel').value;
+  const branch   = document.getElementById('ptBranchSel').value;
+  if (!metricId || !period || !branch) { alert('請選擇指標、期間和據點'); return; }
+  try {
+    // 廠別目標
+    const tAll = await fetch(`/api/performance-targets?metric_id=${metricId}&period=${period}`).then(r=>r.json());
+    _ptBranchTarget = parseFloat(tAll.find(t=>t.branch===branch)?.target_value || 0);
+
+    // 取得人員、已設定目標、實績
+    const [persons, existing, stats] = await Promise.all([
+      fetch(`/api/person-targets/persons?metric_id=${metricId}&period=${period}&branch=${branch}`).then(r=>r.json()),
+      fetch(`/api/person-targets?metric_id=${metricId}&period=${period}&branch=${branch}`).then(r=>r.json()),
+      fetch(`/api/stats/person-performance?metric_id=${metricId}&period=${period}&branch=${branch}`).then(r=>r.json()),
+    ]);
+
+    const existingMap={}, actualMap={};
+    existing.forEach(e => { existingMap[e.person_name] = e; });
+    (stats.persons||[]).forEach(p => { actualMap[p.person_name] = p.actual; });
+
+    const allNames = [...new Set([...persons, ...existing.map(e=>e.person_name)])];
+    _ptPersons = allNames.map(name => ({
+      person_name:  name,
+      weight:       existingMap[name]?.weight != null ? (parseFloat(existingMap[name].weight)*100).toFixed(1) : '',
+      target_value: existingMap[name]?.target_value != null ? parseFloat(existingMap[name].target_value) : '',
+      actual:       actualMap[name] || 0,
+      note:         existingMap[name]?.note || '',
+    }));
+
+    renderPtTable();
+    document.getElementById('ptGrid').style.display = '';
+    document.getElementById('ptMsg').textContent = '';
+
+    const metric = _ptMetrics.find(m=>m.id==metricId);
+    const isAmt = !metric || !['count','qty'].includes(metric.stat_field);
+    const fmtBT = isAmt && _ptBranchTarget >= 1000
+      ? Math.round(_ptBranchTarget/1000).toLocaleString()+'K'
+      : _ptBranchTarget.toLocaleString();
+    document.getElementById('ptBranchInfo').innerHTML =
+      `💡 <strong>${branch}</strong> ${period.slice(0,4)}年${parseInt(period.slice(4))}月 廠別總目標：` +
+      `<strong style="color:#3b82f6;font-size:14px">${fmtBT||'未設定'}</strong>｜` +
+      `DMS 人員共 ${persons.length} 位，已設定個人目標 ${existing.length} 筆。` +
+      (persons.length===0?'<br>⚠️ 此期間此廠尚無 DMS 資料，可手動加入人員名稱。':'');
+  } catch(err) { alert('載入失敗：'+err.message); }
+}
+
+function _ptFmt(v, isAmt) {
+  const n = parseFloat(v||0);
+  if (!n || isNaN(n)) return '—';
+  return isAmt && n >= 1000 ? Math.round(n/1000).toLocaleString()+'K' : n.toLocaleString();
+}
+
+function renderPtTable() {
+  const metric = _ptMetrics.find(m=>m.id==document.getElementById('ptMetricSel').value);
+  const isAmt = !metric || !['count','qty'].includes(metric.stat_field);
+  const fmt = v => _ptFmt(v, isAmt);
+  const tbody = document.getElementById('ptTableBody');
+  const tfoot = document.getElementById('ptTableFoot');
+  let totalWeight=0, totalTarget=0, totalActual=0;
+
+  tbody.innerHTML = _ptPersons.map((p, i) => {
+    const w  = parseFloat(p.weight || 0);
+    const tv = parseFloat(p.target_value || 0);
+    const calcTarget = tv > 0 ? tv : (w > 0 && _ptBranchTarget > 0 ? _ptBranchTarget * w / 100 : 0);
+    const rate = calcTarget > 0 ? (p.actual / calcTarget * 100) : null;
+    const rCol = rate===null ? '#475569' : rate>=100?'#10b981':rate>=80?'#f59e0b':'#ef4444';
+    const barW = rate !== null ? Math.min(100, rate).toFixed(0) : 0;
+    totalWeight += w; totalTarget += calcTarget; totalActual += parseFloat(p.actual||0);
+
+    return `<tr style="border-bottom:1px solid rgba(45,63,86,.3)">
+      <td style="padding:9px 12px;font-weight:600;white-space:nowrap">
+        ${p.person_name}
+        <button onclick="removePtRow(${i})" style="margin-left:8px;background:none;border:none;color:#475569;cursor:pointer;font-size:14px;padding:0;line-height:1;vertical-align:middle" title="移除">×</button>
+      </td>
+      <td style="text-align:right;padding:9px 12px;color:#10b981;font-weight:700">${fmt(p.actual)}</td>
+      <td style="padding:9px 12px">
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px">
+          <input type="number" value="${w||''}" min="0" max="300" step="0.1" placeholder="—"
+            class="pt-input" style="color:#3b82f6;width:68px"
+            oninput="_ptPersons[${i}].weight=this.value;renderPtTable()">
+          <span style="font-size:11px;color:#475569">%</span>
+        </div>
+        ${_ptBranchTarget>0&&w>0?`<div style="font-size:10px;color:#3b82f6;margin-top:2px;text-align:right">→ ${fmt(_ptBranchTarget*w/100)}</div>`:''}
+      </td>
+      <td style="padding:9px 12px">
+        <div style="display:flex;justify-content:flex-end">
+          <input type="number" value="${tv||''}" min="0" step="1" placeholder="—"
+            class="pt-input" style="color:#f97316;width:100px"
+            oninput="_ptPersons[${i}].target_value=this.value;renderPtTable()">
+        </div>
+        ${tv>0?'<div style="font-size:10px;color:#f97316;margin-top:2px;text-align:right">✓ 直接套用</div>':''}
+      </td>
+      <td style="text-align:right;padding:9px 12px;color:#8b5cf6;font-weight:800">${fmt(calcTarget)}</td>
+      <td style="padding:9px 12px">
+        ${rate!==null
+          ?`<div style="display:flex;align-items:center;gap:8px">
+              <div style="flex:1;background:#0f172a;border-radius:3px;height:6px;min-width:50px">
+                <div style="width:${barW}%;height:6px;border-radius:3px;background:${rCol}"></div>
+              </div>
+              <span style="font-size:13px;font-weight:800;color:${rCol};white-space:nowrap;min-width:48px;text-align:right">${rate.toFixed(1)}%</span>
+            </div>`
+          :'<span style="color:#334155;font-size:11px">未設定目標</span>'}
+      </td>
+      <td style="padding:9px 12px"></td>
+    </tr>`;
+  }).join('');
+
+  // 合計列
+  const tRate = totalTarget > 0 ? (totalActual/totalTarget*100) : null;
+  const tRCol = tRate===null ? '#475569' : tRate>=100?'#10b981':'#f59e0b';
+  const weightWarn = totalWeight > 100 && totalWeight > 0;
+  tfoot.innerHTML = `<tr style="background:#1e293b;border-top:2px solid #2d3f56">
+    <td style="padding:9px 12px;font-weight:800;color:#94a3b8">合計 ${_ptPersons.length} 人</td>
+    <td style="text-align:right;padding:9px 12px;font-weight:800;color:#10b981">${fmt(totalActual)}</td>
+    <td style="text-align:right;padding:9px 12px;font-weight:800;color:${weightWarn?'#ef4444':'#3b82f6'}">
+      ${totalWeight.toFixed(1)}%${weightWarn?' ⚠️':''}
+    </td>
+    <td></td>
+    <td style="text-align:right;padding:9px 12px;font-weight:800;color:#8b5cf6">${fmt(totalTarget)}</td>
+    <td style="padding:9px 12px">
+      ${tRate!==null?`<span style="font-size:13px;font-weight:800;color:${tRCol}">${tRate.toFixed(1)}%</span>`:'<span style="color:#475569">—</span>'}
+    </td>
+    <td></td>
+  </tr>`;
+}
+
+function removePtRow(i) { _ptPersons.splice(i,1); renderPtTable(); }
+
+function addPtPerson() {
+  const name = prompt('輸入人員姓名：');
+  if (!name || !name.trim()) return;
+  if (_ptPersons.find(p=>p.person_name===name.trim())) { alert('此人員已存在'); return; }
+  _ptPersons.push({ person_name:name.trim(), weight:'', target_value:'', actual:0, note:'' });
+  renderPtTable();
+}
+
+async function savePersonTargets() {
+  const metricId = document.getElementById('ptMetricSel').value;
+  const period   = document.getElementById('ptPeriodSel').value;
+  const branch   = document.getElementById('ptBranchSel').value;
+  const msgEl    = document.getElementById('ptMsg');
+  if (!metricId||!period||!branch) { msgEl.textContent='請先選擇指標、期間和據點'; msgEl.style.color='#ef4444'; return; }
+
+  const entries = _ptPersons.filter(p=>p.person_name).map(p => ({
+    person_name:  p.person_name,
+    weight:       p.weight ? parseFloat(p.weight)/100 : null,
+    target_value: p.target_value ? parseFloat(p.target_value) : null,
+    note:         p.note || '',
+  }));
+
+  const btn = document.querySelector('#section-person-targets .btn-primary:last-of-type');
+  if (btn) { btn.disabled=true; btn.textContent='儲存中...'; }
+  msgEl.textContent='儲存中...'; msgEl.style.color='#64748b';
+  try {
+    const res = await fetch('/api/person-targets/batch', {
+      method:'PUT', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ metric_id:parseInt(metricId), period, branch, entries }),
+    }).then(r=>r.json());
+    if (res.error) throw new Error(res.error);
+    msgEl.textContent=`✅ 已儲存 ${entries.length} 筆個人目標`; msgEl.style.color='#10b981';
+  } catch(e) { msgEl.textContent='❌ '+e.message; msgEl.style.color='#ef4444'; }
+  finally { if(btn){btn.disabled=false;btn.textContent='💾 儲存個人目標';} }
+}
+
+async function deletePersonTargets() {
+  const metricId = document.getElementById('ptMetricSel').value;
+  const period   = document.getElementById('ptPeriodSel').value;
+  const branch   = document.getElementById('ptBranchSel').value;
+  if (!metricId||!period||!branch) { alert('請先載入要刪除的設定'); return; }
+  const metric = _ptMetrics.find(m=>m.id==metricId);
+  if (!confirm(`確定刪除 ${branch} ${period.slice(0,4)}年${parseInt(period.slice(4))}月\n「${metric?.metric_name||''}」的所有個人目標設定？`)) return;
+  try {
+    await fetch(`/api/person-targets?metric_id=${metricId}&period=${period}&branch=${branch}`, {method:'DELETE'});
+    _ptPersons=[];
+    document.getElementById('ptGrid').style.display='none';
+    document.getElementById('ptMsg').textContent='';
+    alert('✅ 已刪除');
+  } catch(e) { alert('刪除失敗：'+e.message); }
+}
+
+// ══ 密碼 ══
+async function doLogin(){const pwd=document.getElementById('lockInput').value,errEl=document.getElementById('lockError'),btn=document.getElementById('lockBtn');if(!pwd){errEl.textContent='請輸入密碼';return;}btn.disabled=true;btn.textContent='驗證中...';errEl.textContent='';try{const res=await fetch('/api/auth/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});const data=await res.json();if(res.ok&&data.token){sessionStorage.setItem(SETTINGS_TOKEN_KEY,data.token);document.getElementById('lockInput').value='';hideLock();}else{errEl.textContent=data.error||'密碼錯誤';document.getElementById('lockInput').value='';document.getElementById('lockInput').focus();}}catch(e){errEl.textContent='連線失敗，請重試';}finally{btn.disabled=false;btn.textContent='進入設定';}}
+async function changePassword(){const current=document.getElementById('pwdCurrent').value,newPwd=document.getElementById('pwdNew').value,confirm=document.getElementById('pwdConfirm').value,msgEl=document.getElementById('pwdMsg'),btn=document.getElementById('pwdBtn'),token=sessionStorage.getItem(SETTINGS_TOKEN_KEY);msgEl.textContent='';msgEl.style.color='#ef4444';if(!current){msgEl.textContent='請輸入目前密碼';return;}if(!newPwd){msgEl.textContent='請輸入新密碼';return;}if(newPwd.length<4){msgEl.textContent='新密碼至少需要 4 個字元';return;}if(newPwd!==confirm){msgEl.textContent='兩次輸入的新密碼不一致';return;}btn.disabled=true;btn.textContent='儲存中...';try{const res=await fetch('/api/auth/settings/password',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,currentPassword:current,newPassword:newPwd})});const data=await res.json();if(res.ok){msgEl.style.color='#10b981';msgEl.textContent='✅ 密碼已修改，請用新密碼重新登入';['pwdCurrent','pwdNew','pwdConfirm'].forEach(id=>document.getElementById(id).value='');sessionStorage.removeItem(SETTINGS_TOKEN_KEY);setTimeout(()=>{showLock();msgEl.textContent='';},1800);}else{msgEl.textContent=data.error||'修改失敗';}}catch(e){msgEl.textContent='連線失敗，請重試';}finally{btn.disabled=false;btn.textContent='儲存新密碼';}}
+
+ // ══ 工位設定 ══
+let _bayConfig = {};
+
+async function loadBayConfig() {
+  try {
+    _bayConfig = await fetch('/api/tech-bay-config').then(r => r.json());
+    renderBayConfigTable();
+  } catch(e) {}
+}
+
+function renderBayConfigTable() {
+  const BRANCHES = ['AMA','AMC','AMD'];
+  const brColors = { AMA:'#3b82f6', AMC:'#10b981', AMD:'#f59e0b' };
+  document.getElementById('bayConfigBody').innerHTML = BRANCHES.map(br => {
+    const b  = _bayConfig[br] || {};
+    const e  = b.engine   || 0;
+    const bw = b.bodywork || 0;
+    const p  = b.paint    || 0;
+    const col = brColors[br];
+    return `<tr>
+      <td style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3)">
+        <span style="background:${col}22;color:${col};padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700">${br}</span>
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);text-align:center">
+        <input type="number" id="bay-${br}-engine" value="${e}" min="0" max="99"
+          style="background:#0f172a;border:1px solid #2d3f56;color:#8b5cf6;padding:6px 10px;border-radius:6px;font-size:14px;font-weight:800;width:70px;text-align:center;outline:none"
+          oninput="updateBayTotal('${br}')">
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);text-align:center">
+        <input type="number" id="bay-${br}-bodywork" value="${bw}" min="0" max="99"
+          style="background:#0f172a;border:1px solid #2d3f56;color:#f97316;padding:6px 10px;border-radius:6px;font-size:14px;font-weight:800;width:70px;text-align:center;outline:none"
+          oninput="updateBayTotal('${br}')">
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);text-align:center">
+        <input type="number" id="bay-${br}-paint" value="${p}" min="0" max="99"
+          style="background:#0f172a;border:1px solid #2d3f56;color:#06b6d4;padding:6px 10px;border-radius:6px;font-size:14px;font-weight:800;width:70px;text-align:center;outline:none"
+          oninput="updateBayTotal('${br}')">
+      </td>
+      <td id="bay-${br}-total"
+        style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3);text-align:center;font-size:16px;font-weight:800;color:#10b981">
+        ${e + bw + p}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function updateBayTotal(br) {
+  const e  = parseInt(document.getElementById(`bay-${br}-engine`)?.value   || 0);
+  const bw = parseInt(document.getElementById(`bay-${br}-bodywork`)?.value || 0);
+  const p  = parseInt(document.getElementById(`bay-${br}-paint`)?.value    || 0);
+  const el = document.getElementById(`bay-${br}-total`);
+  if (el) el.textContent = e + bw + p;
+}
+
+async function saveBayConfig() {
+  const BRANCHES = ['AMA','AMC','AMD'];
+  const cfg = {};
+  BRANCHES.forEach(br => {
+    cfg[br] = {
+      engine:   parseInt(document.getElementById(`bay-${br}-engine`)?.value   || 0),
+      bodywork: parseInt(document.getElementById(`bay-${br}-bodywork`)?.value || 0),
+      paint:    parseInt(document.getElementById(`bay-${br}-paint`)?.value    || 0),
+    };
+  });
+  const msgEl = document.getElementById('bayConfigMsg');
+  try {
+    const r = await fetch('/api/tech-bay-config', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cfg),
+    }).then(r => r.json());
+    if (r.error) throw new Error(r.error);
+    _bayConfig = cfg;
+    msgEl.textContent = '✅ 工位設定已儲存';
+    msgEl.style.color = '#10b981';
+    setTimeout(() => { msgEl.textContent = ''; }, 2000);
+  } catch(e) {
+    msgEl.textContent = '❌ ' + e.message;
+    msgEl.style.color = '#ef4444';
+  }
+} 
+// ══ 操作紀錄 JS ══
+let _auditPage = 1;
+let _auditTotal = 0;
+let _auditRows  = [];
+ 
+const ACTION_EMOJI = {
+  LOGIN:'🔑', LOGOUT:'🚪', VIEW:'👁️', UPLOAD:'📤', DOWNLOAD:'📥',
+  CREATE:'✏️', UPDATE:'🔧', DELETE:'🗑️', SUBMIT:'📨', USER_MGMT:'👤', PWD_CHANGE:'🔒',
+};
+const STATUS_COLOR = c => c >= 500?'#ef4444': c >= 400?'#f59e0b': c >= 300?'#6366f1': '#10b981';
+ 
+async function loadAuditLogs(page = 1) {
+  _auditPage = page;
+  const tbody = document.getElementById('auditTbody');
+  tbody.innerHTML = '<tr><td colspan="8" style="padding:32px;text-align:center;color:#64748b"><span class="spinner"></span> 載入中...</td></tr>';
+ 
+  const params = new URLSearchParams({
+    page,
+    limit: 100,
+    keyword:     document.getElementById('auditKeyword')?.value   || '',
+    username:    document.getElementById('auditUsername')?.value  || '',
+    action:      document.getElementById('auditAction')?.value    || '',
+    data_branch: document.getElementById('auditBranch')?.value    || '',
+    date_from:   document.getElementById('auditDateFrom')?.value  || '',
+    date_to:     document.getElementById('auditDateTo')?.value    || '',
+  });
+  [...params.entries()].forEach(([k,v]) => { if (!v) params.delete(k); });
+ 
+  try {
+    const res  = await DmsAuth.fetchWithAuth(`/api/audit-logs?${params}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    _auditTotal = data.total;
+    _auditRows  = data.rows || [];
+    renderAuditTable(_auditRows);
+    renderAuditPagination(data.total, data.page, data.page_size);
+    document.getElementById('auditTotalBadge').textContent = `${data.total.toLocaleString()} 筆`;
+    if (page === 1) loadAuditSummary();
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="8" style="padding:24px;text-align:center;color:#ef4444">❌ ${e.message}</td></tr>`;
+  }
+}
+ 
+function renderAuditTable(rows) {
+  const tbody = document.getElementById('auditTbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:40px;text-align:center;color:#64748b">無符合紀錄</td></tr>';
+    return;
+  }
+  const fmtTime = ts => {
+    const d = new Date(ts);
+    return `<div style="font-size:12px;color:#94a3b8">${d.toLocaleDateString('zh-TW',{month:'2-digit',day:'2-digit'})}</div>
+            <div style="font-size:11px;color:#475569;font-variant-numeric:tabular-nums">${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})}</div>`;
+  };
+  const roleColor = { super_admin:'#f59e0b', branch_admin:'#10b981', user:'#3b82f6' };
+  tbody.innerHTML = rows.map(r => {
+    const actionCls = `audit-action aa-${r.action}`;
+    const statusC   = r.status_code ? STATUS_COLOR(r.status_code) : '#334155';
+    const duration  = r.duration_ms ? (r.duration_ms < 1000 ? `${r.duration_ms}ms` : `${(r.duration_ms/1000).toFixed(1)}s`) : '—';
+    const durationC = r.duration_ms > 5000 ? '#ef4444' : r.duration_ms > 2000 ? '#f59e0b' : '#475569';
+    const rColor    = roleColor[r.user_role] || '#64748b';
+    return `<tr style="transition:background .1s" onmouseover="this.style.background='rgba(37,51,71,.5)'" onmouseout="this.style.background=''">
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);white-space:nowrap">${fmtTime(r.created_at)}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3)">
+        <div style="font-weight:700;color:#e2e8f0;font-size:12px">${r.display_name || r.username}</div>
+        <div style="font-size:10px;color:${rColor}">${r.username} · ${r.user_branch||'全廠'}</div>
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);white-space:nowrap">
+        <span class="${actionCls}">${ACTION_EMOJI[r.action]||''} ${r.action}</span>
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);max-width:220px">
+        <div style="color:#cbd5e1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.resource}">${r.resource}</div>
+        ${r.resource_detail ? `<div style="color:#475569;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.resource_detail}">${r.resource_detail}</div>` : ''}
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);white-space:nowrap">
+        ${r.data_branch ? `<span style="background:rgba(59,130,246,.1);color:#3b82f6;font-size:11px;padding:1px 6px;border-radius:4px">${r.data_branch}</span>` : ''}
+        ${r.data_period ? `<span style="color:#64748b;font-size:11px;margin-left:4px">${r.data_period}</span>` : ''}
+        ${!r.data_branch && !r.data_period ? '<span style="color:#2d3f56">—</span>' : ''}
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);white-space:nowrap">
+        <div style="font-family:monospace;font-size:11px;color:#64748b;cursor:pointer"
+             onclick="filterByIP('${r.ip_address}')" title="點擊篩選此 IP">${r.ip_address}</div>
+        <div style="font-size:10px;color:#334155">${r.browser||''}</div>
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);text-align:center;white-space:nowrap">
+        ${r.status_code ? `<span style="font-size:11px;font-weight:700;color:${statusC}">${r.status_code}</span>` : '<span style="color:#334155">—</span>'}
+      </td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(45,63,86,.3);text-align:right;white-space:nowrap">
+        <span style="font-size:11px;color:${durationC};font-variant-numeric:tabular-nums">${duration}</span>
+      </td>
+    </tr>`;
+  }).join('');
+}
+ 
+function renderAuditPagination(total, page, pageSize) {
+  const wrap = document.getElementById('auditPagination');
+  const totalPages = Math.ceil(total / pageSize) || 1;
+  if (total === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  const pageBtn = (label, p, active, disabled) =>
+    `<button onclick="loadAuditLogs(${p})" ${disabled?'disabled':''} style="width:30px;height:30px;border:1px solid ${active?'#3b82f6':'#2d3f56'};border-radius:6px;background:${active?'#3b82f6':'#0f172a'};color:${active?'#fff':'#64748b'};font-size:12px;font-weight:600;cursor:pointer;${disabled?'opacity:.4;cursor:not-allowed':''}">${label}</button>`;
+  let btns = '';
+  btns += pageBtn('«', 1, false, page===1);
+  btns += pageBtn('‹', page-1, false, page===1);
+  for (let p = Math.max(1,page-2); p <= Math.min(totalPages,page+2); p++) {
+    btns += pageBtn(p, p, p===page, false);
+  }
+  btns += pageBtn('›', page+1, false, page===totalPages);
+  btns += pageBtn('»', totalPages, false, page===totalPages);
+  const start = (page-1)*pageSize+1, end = Math.min(page*pageSize, total);
+  wrap.innerHTML = btns + `<span style="font-size:12px;color:#64748b;margin-left:8px">第${page}/${totalPages}頁 · ${start.toLocaleString()}–${end.toLocaleString()} / 共${total.toLocaleString()}筆</span>`;
+}
+ 
+async function loadAuditSummary() {
+  try {
+    const sum = await DmsAuth.fetchWithAuth('/api/audit-logs/summary').then(r => r.json());
+    if (sum.error) return;
+    const cards = document.getElementById('auditSummaryCards');
+    const c = sum.counts || {};
+    const kpi = (label, val, sub, color) => `
+      <div style="background:#1a2332;border:1px solid #2d3f56;border-radius:10px;padding:14px 16px">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px">${label}</div>
+        <div style="font-size:22px;font-weight:800;color:${color||'#e2e8f0'}">${(val||0).toLocaleString()}</div>
+        ${sub?`<div style="font-size:11px;color:#475569;margin-top:2px">${sub}</div>`:''}
+      </div>`;
+    cards.innerHTML =
+      kpi('📅 今日操作', c.today, `${c.today_users||0} 人登入・${c.today_ips||0} 個 IP`, '#3b82f6') +
+      kpi('📆 本週操作', c.this_week, '', '#10b981') +
+      kpi('🗓️ 本月操作', c.this_month, '', '#f59e0b') +
+      (sum.recent_errors?.length ? kpi('⚠️ 近期錯誤', sum.recent_errors.length, '近期 400/500 錯誤', '#ef4444') : '');
+ 
+    const panels = document.getElementById('auditDetailPanels');
+    const topUsersHTML = `
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">🏃 7 天活躍使用者</div></div>
+        <div style="padding:0">
+          ${(sum.top_users||[]).map((u,i) => `
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(45,63,86,.3);cursor:pointer"
+                 onclick="filterByUser('${u.username}')"
+                 onmouseover="this.style.background='rgba(37,51,71,.4)'" onmouseout="this.style.background=''">
+              <div style="font-size:11px;color:#334155;width:16px;text-align:right;font-weight:700">${i+1}</div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:700;color:#e2e8f0">${u.display_name||u.username}</div>
+                <div style="font-size:11px;color:#475569">${u.username} · ${u.user_branch||'全廠'}</div>
+              </div>
+              <div style="font-size:13px;font-weight:800;color:#3b82f6">${parseInt(u.cnt).toLocaleString()}</div>
+              <div style="font-size:10px;color:#334155;white-space:nowrap">${new Date(u.last_seen).toLocaleDateString('zh-TW',{month:'2-digit',day:'2-digit'})}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    const topIPsHTML = `
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">🌐 7 天活躍 IP</div></div>
+        <div style="padding:0">
+          ${(sum.top_ips||[]).map((ip,i) => `
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(45,63,86,.3);cursor:pointer"
+                 onclick="filterByIP('${ip.ip_address}')"
+                 onmouseover="this.style.background='rgba(37,51,71,.4)'" onmouseout="this.style.background=''">
+              <div style="font-size:11px;color:#334155;width:16px;text-align:right;font-weight:700">${i+1}</div>
+              <div style="flex:1">
+                <div style="font-family:monospace;font-size:12px;color:#94a3b8">${ip.ip_address}</div>
+                <div style="font-size:10px;color:#475569">${(ip.users||[]).slice(0,3).join(' · ')}</div>
+              </div>
+              <div style="font-size:13px;font-weight:800;color:#f59e0b">${parseInt(ip.cnt).toLocaleString()}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    panels.innerHTML = topUsersHTML + topIPsHTML;
+  } catch(e) {}
+}
+ 
+function filterByUser(username) {
+  document.getElementById('auditUsername').value = username;
+  loadAuditLogs(1);
+}
+function filterByIP(ip) {
+  document.getElementById('auditKeyword').value = ip;
+  loadAuditLogs(1);
+}
+function resetAuditFilters() {
+  ['auditKeyword','auditUsername','auditDateFrom','auditDateTo'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  ['auditAction','auditBranch'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  loadAuditLogs(1);
+}
+function exportAuditCSV() {
+  if (!_auditRows.length) { alert('請先查詢後再匯出'); return; }
+  const headers = ['時間','使用者','帳號','角色','廠別','動作','資源','資料廠別','資料期間','IP位址','瀏覽器','狀態碼','耗時(ms)'];
+  const rows = _auditRows.map(r => [
+    new Date(r.created_at).toLocaleString('zh-TW'),
+    r.display_name, r.username, r.user_role, r.user_branch||'',
+    r.action, r.resource, r.data_branch||'', r.data_period||'',
+    r.ip_address, r.browser||'', r.status_code||'', r.duration_ms||'',
+  ].map(v => { const s=String(v||''); return s.includes(',')||s.includes('"')?`"${s.replace(/"/g,'""')}"`:s; }).join(','));
+  const csv  = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `audit_log_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+function onAuditTabActivate() { loadAuditLogs(1); }
+ // ═══ 使用者管理 JS ═══
+let _editingUserId = null;
+
+async function loadUsers() {
+  const wrap = document.getElementById('usersTableWrap');
+  if (!wrap) return;
+  try {
+    const res = await DmsAuth.fetchWithAuth('/api/users');
+    const users = await res.json();
+    if (!res.ok) throw new Error(users.error);
+    renderUsersTable(users);
+  } catch(e) {
+    wrap.innerHTML = `<div style="padding:24px;color:#ef4444">❌ ${e.message}</div>`;
+  }
+}
+
+function renderUsersTable(users) {
+  const wrap = document.getElementById('usersTableWrap');
+  const me = window._currentUser;
+  const roleLabel = { super_admin:'🔑 超管', branch_admin:'🛡️ 據點管理員', user:'👤 一般使用者' };
+  const roleColor = { super_admin:'#f59e0b', branch_admin:'#10b981', user:'#3b82f6' };
+
+  if (!users.length) {
+    wrap.innerHTML = '<div style="padding:32px;text-align:center;color:#64748b">尚無使用者</div>';
+    return;
+  }
+
+  let html = `<table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr>
+      <th style="padding:9px 14px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left">帳號</th>
+      <th style="padding:9px 14px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left">顯示名稱</th>
+      <th style="padding:9px 14px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left">角色</th>
+      <th style="padding:9px 14px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left">據點</th>
+      <th style="padding:9px 14px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left">狀態</th>
+      <th style="padding:9px 14px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:left">最後登入</th>
+      <th style="padding:9px 14px;background:#0f172a;color:#64748b;font-size:11px;border-bottom:1px solid #2d3f56;text-align:center">操作</th>
+    </tr></thead><tbody>`;
+
+  users.forEach(u => {
+    const isMe = u.id === me?.id;
+    const lastLogin = u.last_login ? new Date(u.last_login).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+    html += `<tr style="${!u.is_active?'opacity:.4':''}">
+      <td style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3)">
+        <span style="font-weight:700;color:#e2e8f0">${u.username}</span>
+        ${isMe ? '<span style="background:rgba(59,130,246,.15);color:#60a5fa;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px">我</span>' : ''}
+      </td>
+      <td style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3);color:#94a3b8">${u.display_name}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3)">
+        <span style="background:${roleColor[u.role]}22;color:${roleColor[u.role]};padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">
+          ${roleLabel[u.role] || u.role}
+        </span>
+      </td>
+      <td style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3);color:#64748b">${u.branch || '全廠'}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3)">
+        <span style="background:${u.is_active?'rgba(16,185,129,.12)':'rgba(100,116,139,.12)'};color:${u.is_active?'#10b981':'#64748b'};padding:2px 8px;border-radius:5px;font-size:11px">
+          ${u.is_active ? '✅ 啟用' : '⛔ 停用'}
+        </span>
+      </td>
+      <td style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3);color:#475569;font-size:12px">${lastLogin}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid rgba(45,63,86,.3);text-align:center">
+        ${!isMe ? `
+          <button onclick="openEditUserModal(${JSON.stringify(u).replace(/"/g,'&quot;')})"
+            style="background:rgba(59,130,246,.1);color:#3b82f6;border:1px solid rgba(59,130,246,.2);padding:4px 10px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px">
+            編輯
+          </button>
+          <button onclick="deleteUser(${u.id},'${u.username}')"
+            style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2);padding:4px 10px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer">
+            刪除
+          </button>
+        ` : '<span style="color:#334155;font-size:12px">—</span>'}
+      </td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function openAddUserModal() {
+  _editingUserId = null;
+  document.getElementById('userModalTitle').textContent = '新增使用者';
+  document.getElementById('umUsername').value = '';
+  document.getElementById('umUsername').disabled = false;
+  document.getElementById('umDisplayName').value = '';
+  document.getElementById('umPassword').value = '';
+  document.getElementById('umPwNote').textContent = '（必填）';
+  document.getElementById('umRole').value = 'user';
+  document.getElementById('umBranch').value = '';
+  document.querySelectorAll('[name=perm]').forEach(c => c.checked = false);
+  document.getElementById('umMsg').textContent = '';
+  onRoleChange();
+  const me = window._currentUser;
+  if (me?.role === 'branch_admin') {
+    document.getElementById('umRole').disabled = true;
+    document.getElementById('umBranch').value = me.branch;
+    document.getElementById('umBranch').disabled = true;
+  } else {
+    document.getElementById('umRole').disabled = false;
+    document.getElementById('umBranch').disabled = false;
+  }
+  document.getElementById('userModal').style.display = 'flex';
+}
+
+function openEditUserModal(user) {
+  _editingUserId = user.id;
+  document.getElementById('userModalTitle').textContent = `編輯使用者 — ${user.username}`;
+  document.getElementById('umUsername').value = user.username;
+  document.getElementById('umUsername').disabled = true;
+  document.getElementById('umDisplayName').value = user.display_name;
+  document.getElementById('umPassword').value = '';
+  document.getElementById('umPwNote').textContent = '（留空不修改）';
+  document.getElementById('umRole').value = user.role;
+  document.getElementById('umBranch').value = user.branch || '';
+  document.getElementById('umMsg').textContent = '';
+  const perms = user.permissions || [];
+  document.querySelectorAll('[name=perm]').forEach(c => { c.checked = perms.includes(c.value); });
+  onRoleChange();
+  document.getElementById('userModal').style.display = 'flex';
+}
+
+function closeUserModal() { document.getElementById('userModal').style.display = 'none'; }
+
+function onRoleChange() {
+  const role = document.getElementById('umRole').value;
+  const permSection = document.getElementById('umPermSection');
+  if (permSection) permSection.style.display = role === 'super_admin' ? 'none' : '';
+}
+
+async function saveUser() {
+  const msg  = document.getElementById('umMsg');
+  const btn  = document.getElementById('umSaveBtn');
+  const username = document.getElementById('umUsername').value.trim();
+  const display  = document.getElementById('umDisplayName').value.trim() || username;
+  const password = document.getElementById('umPassword').value;
+  const role     = document.getElementById('umRole').value;
+  const branch   = document.getElementById('umBranch').value;
+  const permissions = [...document.querySelectorAll('[name=perm]:checked')].map(c => c.value);
+
+  if (!_editingUserId && !username) { msg.style.color='#ef4444'; msg.textContent='請填入帳號'; return; }
+  if (!_editingUserId && !password) { msg.style.color='#ef4444'; msg.textContent='請填入密碼'; return; }
+
+  btn.disabled = true; btn.textContent = '儲存中...';
+  try {
+    let res, data;
+    if (_editingUserId) {
+      const body = { display_name: display, role, branch: branch||null, is_active: true, permissions };
+      if (password) body.password = password;
+      res  = await DmsAuth.fetchWithAuth(`/api/users/${_editingUserId}`, {
+        method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+      });
+      data = await res.json();
+      if (data.error) throw new Error(data.error);
+      if (password) {
+        const pr = await DmsAuth.fetchWithAuth(`/api/users/${_editingUserId}/password`, {
+          method:'PUT', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ password })
+        }).then(r => r.json());
+        if (pr.error) throw new Error('密碼更新：' + pr.error);
+      }
+    } else {
+      res  = await DmsAuth.fetchWithAuth('/api/users', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ username, password, display_name:display, role, branch:branch||null, permissions })
+      });
+      data = await res.json();
+      if (data.error) throw new Error(data.error);
+    }
+    msg.style.color = '#10b981'; msg.textContent = '✅ 已儲存';
+    setTimeout(() => { closeUserModal(); loadUsers(); }, 600);
+  } catch(e) {
+    msg.style.color = '#ef4444'; msg.textContent = '❌ ' + e.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '儲存';
+  }
+}
+
+async function deleteUser(id, username) {
+  if (!confirm(`確定要刪除使用者「${username}」？此操作不可復原。`)) return;
+  try {
+    const res  = await DmsAuth.fetchWithAuth(`/api/users/${id}`, { method:'DELETE' });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    loadUsers();
+  } catch(e) { alert('刪除失敗：' + e.message); }
+}
+
+// ══ 初始化 ══
+(async () => {
+  await DmsAuth.init({ requiredPermission: 'page:settings' });
+  loadHistory();
+})();
+function initTheme(){const s=localStorage.getItem('volvo_theme')||'dark';applyTheme(s,false);}
+function applyTheme(t,re){if(t==='light')document.body.classList.add('light-theme');else document.body.classList.remove('light-theme');const b=document.getElementById('themeToggleBtn');if(b)b.textContent=t==='light'?'🌙':'☀️';localStorage.setItem('volvo_theme',t);}
+function toggleTheme(){applyTheme(document.body.classList.contains('light-theme')?'dark':'light',true);}
+initTheme();
+</script>
+ <!-- ══ 使用者 Modal ══ -->
+<div id="userModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;
+     align-items:center;justify-content:center;padding:16px;overflow-y:auto"
+     onclick="if(event.target===this)closeUserModal()">
+  <div style="background:#1a2740;border:1px solid #2d4060;border-radius:14px;width:100%;max-width:560px;margin:auto">
+    <div style="padding:16px 20px 0;display:flex;align-items:center;gap:10px">
+      <div style="flex:1;font-size:15px;font-weight:800;color:#fff" id="userModalTitle">新增使用者</div>
+      <button onclick="closeUserModal()" style="width:30px;height:30px;border-radius:7px;border:1px solid #2d3f56;background:#0f172a;color:#64748b;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div style="padding:18px 20px 20px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div>
+          <label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:6px">帳號 *</label>
+          <input id="umUsername" type="text" placeholder="英文+數字" style="width:100%;background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:9px 12px;border-radius:7px;font-size:14px;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:6px">顯示名稱</label>
+          <input id="umDisplayName" type="text" placeholder="中文姓名" style="width:100%;background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:9px 12px;border-radius:7px;font-size:14px;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:6px">密碼 <span id="umPwNote" style="color:#475569;font-weight:400">（必填）</span></label>
+          <input id="umPassword" type="password" placeholder="至少 6 字元" style="width:100%;background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:9px 12px;border-radius:7px;font-size:14px;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:6px">角色</label>
+          <select id="umRole" onchange="onRoleChange()" style="width:100%;background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:9px 12px;border-radius:7px;font-size:14px;outline:none">
+            <option value="user">一般使用者</option>
+            <option value="branch_admin">據點管理員</option>
+            <option value="super_admin">超級管理員</option>
+          </select>
+        </div>
+      </div>
+      <div id="umBranchRow" style="margin-bottom:14px">
+        <label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:6px">所屬據點（留空=不限）</label>
+        <select id="umBranch" style="background:#0f172a;border:1px solid #2d3f56;color:#e2e8f0;padding:9px 12px;border-radius:7px;font-size:14px;outline:none;min-width:180px">
+          <option value="">不限（全廠）</option>
+          <option value="AMA">AMA 內湖廠</option>
+          <option value="AMC">AMC 仁愛廠</option>
+          <option value="AMD">AMD 士林廠</option>
+        </select>
+      </div>
+      <div id="umPermSection">
+        <div style="font-size:12px;color:#64748b;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">功能權限設定</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+          <div>
+            <div style="font-size:11px;color:#475569;margin-bottom:6px">📄 頁面存取</div>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="page:performance"> 業績指標</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="page:stats"> 各廠明細</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="page:query"> 資料查詢</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="page:bonus"> 獎金表</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="page:settings"> 系統設定</label>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#475569;margin-bottom:6px">🏭 廠別存取</div>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="branch:AMA"> AMA 內湖廠</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="branch:AMC"> AMC 仁愛廠</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="branch:AMD"> AMD 士林廠</label>
+            <div style="font-size:11px;color:#475569;margin-bottom:6px;margin-top:10px">⚙️ 功能操作</div>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="feature:upload"> Excel 上傳</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="feature:targets"> 目標設定</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="feature:bonus_edit"> 獎金指標設定</label>
+            <label class="um-perm-row"><input type="checkbox" name="perm" value="feature:user_manage"> 使用者管理</label>
+          </div>
+        </div>
+      </div>
+      <div id="umMsg" style="font-size:13px;min-height:20px;margin-bottom:8px"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="closeUserModal()" style="padding:8px 16px;background:#253347;color:#cbd5e1;border:1px solid #2d3f56;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">取消</button>
+        <button id="umSaveBtn" onclick="saveUser()" style="padding:8px 18px;background:#3b82f6;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">儲存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.um-perm-row { display:flex;align-items:center;gap:7px;padding:4px 0;font-size:13px;color:#94a3b8;cursor:pointer; }
+.um-perm-row:hover { color:#e2e8f0; }
+.um-perm-row input { accent-color:#3b82f6;cursor:pointer; }
+</style>
+</body>
+</html>
